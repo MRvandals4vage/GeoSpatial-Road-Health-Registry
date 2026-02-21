@@ -1,0 +1,132 @@
+/* src/components/layout/Navbar.css */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-height);
+  padding: 0 1.5rem;
+  background: var(--surface-panel);
+  border-bottom: 1px solid var(--border-subtle);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+}
+
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: opacity 0.2s;
+}
+
+.navbar__brand:hover {
+  opacity: 0.8;
+}
+
+.navbar__icon {
+  font-size: 1.4rem;
+  color: var(--accent-cyan);
+  text-shadow: 0 0 10px rgba(79, 209, 197, 0.4);
+}
+
+.navbar__title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.navbar__title--accent {
+  color: var(--accent-cyan);
+}
+
+.navbar__subtitle {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-left: 0.5rem;
+  border-left: 1px solid var(--border-subtle);
+  margin-left: 0.5rem;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .navbar__subtitle {
+    display: block;
+  }
+}
+
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar__pill {
+  padding: 0.35rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.navbar__pill:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.navbar__pill--active {
+  color: var(--accent-cyan);
+  background: rgba(79, 209, 197, 0.08);
+  border-color: rgba(79, 209, 197, 0.2);
+}
+
+.navbar__meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__status-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--status-good);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--status-good);
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 4px var(--status-good);
+  }
+
+  50% {
+    box-shadow: 0 0 12px var(--status-good);
+  }
+
+  100% {
+    box-shadow: 0 0 4px var(--status-good);
+  }
+}
+
+.navbar__status-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--status-good);
+  letter-spacing: 0.1em;
+}
+
+.navbar__timestamp {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 0.3rem 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}

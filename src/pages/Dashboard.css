@@ -1,0 +1,38 @@
+/* src/pages/Dashboard.css */
+:root {
+    --bg-primary: #0f0f1a;
+    --bg-secondary: #1a1a2b;
+    --text-primary: #e0e0ff;
+    --accent: #4fd1c5;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard__content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 260px 1fr 300px;
+    gap: 1rem;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .dashboard__content {
+        grid-template-columns: 200px 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard__content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+    }
+}
