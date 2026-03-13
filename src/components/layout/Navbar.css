@@ -1,132 +1,107 @@
-/* src/components/layout/Navbar.css */
-
 .navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: var(--navbar-height);
-  padding: 0 1.5rem;
-  background: var(--surface-panel);
-  border-bottom: 1px solid var(--border-subtle);
-  backdrop-filter: blur(12px);
-  z-index: 1000;
+    height: 64px;
+    background: rgba(2, 6, 23, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    backdrop-filter: blur(12px);
+    z-index: 100;
 }
 
 .navbar__brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: opacity 0.2s;
-}
-
-.navbar__brand:hover {
-  opacity: 0.8;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
 }
 
 .navbar__icon {
-  font-size: 1.4rem;
-  color: var(--accent-cyan);
-  text-shadow: 0 0 10px rgba(79, 209, 197, 0.4);
+    display: none;
 }
 
 .navbar__title {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.01em;
 }
 
 .navbar__title--accent {
-  color: var(--accent-cyan);
+    color: #4fd1c5;
 }
 
 .navbar__subtitle {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding-left: 0.5rem;
-  border-left: 1px solid var(--border-subtle);
-  margin-left: 0.5rem;
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .navbar__subtitle {
-    display: block;
-  }
+    font-size: 0.65rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .navbar__nav {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 10px;
 }
 
 .navbar__pill {
-  padding: 0.35rem 1.1rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
-}
-
-.navbar__pill:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.03);
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
 .navbar__pill--active {
-  color: var(--accent-cyan);
-  background: rgba(79, 209, 197, 0.08);
-  border-color: rgba(79, 209, 197, 0.2);
+    background: #4fd1c5;
+    color: #020617;
+    font-weight: 600;
 }
 
 .navbar__meta {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 }
 
-.navbar__status-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--status-good);
-  border-radius: 50%;
-  box-shadow: 0 0 10px var(--status-good);
-  animation: pulse-glow 2s infinite;
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
-@keyframes pulse-glow {
-  0% {
-    box-shadow: 0 0 4px var(--status-good);
-  }
-
-  50% {
-    box-shadow: 0 0 12px var(--status-good);
-  }
-
-  100% {
-    box-shadow: 0 0 4px var(--status-good);
-  }
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
 }
 
-.navbar__status-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--status-good);
-  letter-spacing: 0.1em;
+.user-role {
+    font-size: 0.6rem;
+    color: #4fd1c5;
+    text-transform: uppercase;
+}
+
+.logout-btn {
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: #f87171;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: rgba(248, 113, 113, 0.2);
 }
 
 .navbar__timestamp {
-  font-family: 'Orbitron', monospace;
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  padding: 0.3rem 0.6rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 4px;
+    font-size: 0.8rem;
+    font-family: 'Inter', monospace;
+    color: #475569;
 }

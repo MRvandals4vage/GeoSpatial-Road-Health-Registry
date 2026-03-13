@@ -1,0 +1,144 @@
+.complaints-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #020617;
+}
+
+.complaints-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.complaints-container {
+    width: 600px;
+    padding: 3rem;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 20px;
+}
+
+.complaints-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.complaints-header h2 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.complaints-header p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.complaints-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.form-row label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.form-row select, .form-row textarea {
+    background: #020617;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.8rem;
+    color: white;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.image-upload-zone {
+    width: 100%;
+}
+
+.upload-btn {
+    display: block;
+    width: 100%;
+    padding: 1.5rem;
+    border: 2px dashed rgba(79, 209, 197, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    color: #4fd1c5;
+    cursor: pointer;
+    background: rgba(79, 209, 197, 0.05);
+    transition: all 0.2s;
+}
+
+.upload-btn:hover {
+    border-color: #4fd1c5;
+    background: rgba(79, 209, 197, 0.1);
+}
+
+.location-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    background: rgba(0,0,0,0.2);
+    padding: 0.8rem;
+    border-radius: 8px;
+}
+
+.loc-warning {
+    color: #fca5a5;
+}
+
+.status-msg {
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.status-msg.success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-msg.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.submit-complaint-btn {
+    background: #4fd1c5;
+    color: #020617;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.submit-complaint-btn:hover {
+    background: #38b2ac;
+    transform: translateY(-1px);
+}
+
+.submit-complaint-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

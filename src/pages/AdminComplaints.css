@@ -1,0 +1,123 @@
+.admin-complaints-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #020617;
+}
+
+.admin-main {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.admin-header h1 {
+    font-size: 1.8rem;
+    color: white;
+}
+
+.admin-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-pill {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.stat-pill.urgent {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+.complaints-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.complaint-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.complaint-card__img {
+    position: relative;
+    height: 180px;
+}
+
+.complaint-card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.prediction-tag {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.prediction-tag.SEVERE { background: #ef4444; color: white; }
+.prediction-tag.MODERATE { background: #eab308; color: #020617; }
+.prediction-tag.GOOD { background: #22c55e; color: white; }
+
+.complaint-card__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.complaint-card__body h3 {
+    font-size: 1.1rem;
+    color: white;
+}
+
+.complaint-card__time {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.complaint-card__comment {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+    font-style: italic;
+}.admin-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.admin-actions button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.resolve-btn { background: #22c55e; color: white; border: none; }
+.override-btn { background: #334155; color: white; border: none; }
+.delete-btn { background: transparent; color: #f87171; border: 1px solid #ef4444; }
