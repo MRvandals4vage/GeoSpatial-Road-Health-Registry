@@ -139,6 +139,76 @@
     flex-shrink: 0;
 }
 
+/* ── Premium Gauge ────────────────────────────── */
+.premium-gauge {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.gauge-svg {
+    width: 180px;
+    height: 110px;
+}
+
+.gauge-value {
+    position: absolute;
+    bottom: 24px;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 20px rgba(79, 209, 197, 0.3);
+}
+
+.gauge-label {
+    position: absolute;
+    bottom: 10px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* ── Area Select ────────────────────────────────── */
+.area-select {
+    width: 100%;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.area-select:hover {
+    border-color: rgba(79, 209, 197, 0.4);
+}
+
+/* ── Mock Upload ───────────────────────────────── */
+.mock-upload {
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--border-subtle);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── Condition colors for filters ─────────────── */
+.filter-chip[data-cond="GOOD"].active { color: #4ade80; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+.filter-chip[data-cond="MODERATE"].active { color: #fde047; border-color: #eab308; background: rgba(234, 179, 8, 0.1); }
+.filter-chip[data-cond="SEVERE"].active { color: #fca5a5; border-color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
 .road-item--good .road-item__score {
     color: var(--status-good);
 }
@@ -151,29 +221,197 @@
     color: var(--status-severe);
 }
 
-/* ── Legend ──────────────────────────────────────── */
-.legend {
-    padding: 0.8rem 1rem;
-    border-top: 1px solid var(--border-subtle);
+/* ── Controls Section ────────────────────────────── */
+.controls-section {
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.legend-item {
+.toggle-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 0.5rem;
 }
 
-.legend-item__swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
+.toggle-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    font-weight: 700;
 }
 
-.legend-item__label {
-    font-size: 0.68rem;
+.switch-wrapper {
+    display: flex;
+    background: rgba(2, 6, 23, 0.5);
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 6px 0;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.mode-btn.active {
+    background: var(--accent-cyan);
+    color: #020617;
+    font-weight: 600;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Filter Chips ────────────────────────────────── */
+.filter-chips {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(255,255,255,0.03);
     color: var(--text-muted);
+}
+
+.filter-chip.active {
+    background: rgba(79, 209, 197, 0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+/* ── Segment Details View ────────────────────────── */
+.back-btn {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-right: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.05);
+}
+
+.analytics-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.status-badge {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge[data-status="GOOD"] { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.2); }
+.status-badge[data-status="MODERATE"] { background: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.2); }
+.status-badge[data-status="SEVERE"] { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+.gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: radial-gradient(circle at center, rgba(79, 209, 197, 0.1), transparent);
+    border-radius: 20px;
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    font-family: 'Orbitron', sans-serif;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 5px;
+}
+
+/* ── Inspection Form ─────────────────────────────── */
+.inspect-btn {
+    width: 100%;
+    padding: 12px;
+    background: rgba(79, 209, 197, 0.1);
+    color: var(--accent-cyan);
+    border: 1px dashed var(--accent-cyan);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.inspect-btn:hover {
+    background: rgba(79, 209, 197, 0.15);
+}
+
+.inspection-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255,255,255,0.02);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+}
+
+.inspection-form h4 {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.inspection-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.inspection-form input,
+.inspection-form select,
+.inspection-form textarea {
+    background: #020617;
+    border: 1px solid var(--border-subtle);
+    padding: 8px;
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.submit-btn {
+    background: var(--accent-cyan);
+    color: #020617;
+    font-weight: 600;
 }
