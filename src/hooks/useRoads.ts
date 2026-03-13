@@ -1,34 +1,28 @@
 import { useEffect } from 'react';
-import { fetchRoads } from '../services/api';
 import { useRoadStore } from '../store/roadStore';
+import * as api from '../services/api';
 
 /**
  * Fetches road data on mount and populates the global store.
  * Returns store-level loading / error state for consumers.
  */
 export function useRoads() {
-    const { setRoads, setLoading, setError, isLoading, error, roads } = useRoadStore();
+    const { fetchRoads, fetchAnalytics, fetchAlerts, isLoading, error, roads } = useRoadStore();
 
     useEffect(() => {
-        let cancelled = false;
-
-        (async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const data = await fetchRoads();
-                if (!cancelled) setRoads(data);
-            } catch (err) {
-                if (!cancelled) setError(err instanceof Error ? err.message : 'Unknown error');
-            } finally {
-                if (!cancelled) setLoading(false);
+        const init = async () => {
+            await fetchRoads();
+            const currentRoads = useRoadStore.getState().roads;
+            if (currentRoads.length === 0) {
+                const { mockRoads } = await import('../services/mockData');
+                await api.seedBackend(mockRoads);
+                await fetchRoads();
             }
-        })();
-
-        return () => {
-            cancelled = true;
+            fetchAnalytics();
+            fetchAlerts();
         };
-    }, [setRoads, setLoading, setError]);
+        init();
+    }, [fetchRoads, fetchAnalytics, fetchAlerts]);
 
     return { roads, isLoading, error };
 }

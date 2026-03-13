@@ -4,18 +4,24 @@ import { formatCondition, formatScore, formatDate } from '../../utils/roadUtils'
 import './MetricsPanel.css';
 
 const MetricsPanel: React.FC = () => {
-    const roads = useRoadStore((s) => s.roads);
     const selectedRoad = useRoadStore((s) => s.selectedRoad);
+    const analytics = useRoadStore((s) => s.analytics);
+    const isLoading = useRoadStore((s) => s.isLoading);
 
-    // ── Derived stats ───────────────────────────────
-    const total = roads.length;
-    const good = roads.filter((r) => r.condition === 'GOOD').length;
-    const moderate = roads.filter((r) => r.condition === 'MODERATE').length;
-    const severe = roads.filter((r) => r.condition === 'SEVERE').length;
-    const totalKm = roads.reduce((sum, r) => sum + r.lengthKm, 0).toFixed(1);
-    const avgScore = total
-        ? Math.round(roads.reduce((s, r) => s + r.conditionScore, 0) / total)
-        : 0;
+    if (!analytics) {
+        return (
+            <aside className="metrics-panel">
+                <div className="metrics-panel__empty-state">Loading metrics...</div>
+            </aside>
+        );
+    }
+
+    const { totalSegments, totalLengthKm, averageScore, conditionCounts, severeCount, maintenanceBacklog } = analytics;
+    
+    // Percentages
+    const pctGood = totalSegments ? Math.round((conditionCounts.GOOD / totalSegments) * 100) : 0;
+    const pctMod = totalSegments ? Math.round((conditionCounts.MODERATE / totalSegments) * 100) : 0;
+    const pctSev = totalSegments ? Math.round((conditionCounts.SEVERE / totalSegments) * 100) : 0;
 
     return (
         <aside className="metrics-panel">
@@ -25,38 +31,41 @@ const MetricsPanel: React.FC = () => {
                 <h2 className="panel-header__title">Network Metrics</h2>
             </div>
 
-            {!selectedRoad ? (
-                <div className="metrics-panel__empty-state">
-                    <div className="empty-state__icon">📍</div>
-                    <p className="empty-state__text">No area specified.</p>
-                    <p className="empty-state__subtext">Select a road segment on the map to view real‑time monitoring metrics and condition analysis.</p>
+            <div className={`metrics-content ${isLoading ? 'loading-fade' : 'loading-enter'}`}>
+                {/* ── Overview cards ─────────────────────────── */}
+                <div className="metrics-panel__cards">
+                    <StatCard label="Total Segments" value={String(totalSegments)} unit="" />
+                    <StatCard label="Avg. Score" value={String(averageScore)} unit="/100" />
+                    <StatCard label="Severe Roads" value={String(severeCount)} unit="" />
                 </div>
-            ) : (
-                <>
-                    {/* ── Overview cards ─────────────────────────── */}
-                    <div className="metrics-panel__cards">
-                        <StatCard label="Total Segments" value={String(total)} unit="roads" />
-                        <StatCard label="Total Coverage" value={totalKm} unit="km" />
-                        <StatCard label="Avg. Score" value={String(avgScore)} unit="/100" />
-                    </div>
+                
+                <div className="metrics-panel__cards" style={{ marginTop: '10px' }}>
+                     <StatCard label="Total Length" value={totalLengthKm.toFixed(1)} unit="km" />
+                     <StatCard label="Backlog" value={'$' + (maintenanceBacklog / 1000).toFixed(0) + 'k'} unit="est" />
+                </div>
 
-                    {/* ── Condition breakdown ─────────────────────── */}
-                    <div className="metrics-panel__section">
-                        <h3 className="section-label">Condition Breakdown</h3>
-                        <ConditionBar label="Good" count={good} total={total} colorVar="--status-good" />
-                        <ConditionBar label="Moderate" count={moderate} total={total} colorVar="--status-moderate" />
-                        <ConditionBar label="Severe" count={severe} total={total} colorVar="--status-severe" />
-                    </div>
+                {/* ── Condition breakdown ─────────────────────── */}
+                <div className="metrics-panel__section">
+                    <h3 className="section-label">Condition Breakdown</h3>
+                    <ConditionBar label="Good" count={conditionCounts.GOOD} pct={pctGood} colorVar="--status-good" />
+                    <ConditionBar label="Moderate" count={conditionCounts.MODERATE} pct={pctMod} colorVar="--status-moderate" />
+                    <ConditionBar label="Severe" count={conditionCounts.SEVERE} pct={pctSev} colorVar="--status-severe" />
+                </div>
 
-                    {/* ── Selected road detail ────────────────────── */}
-                    <div className="metrics-panel__section">
-                        <h3 className="section-label">Selected Segment</h3>
+                {/* ── Selected road detail ────────────────────── */}
+                <div className="metrics-panel__section">
+                    <h3 className="section-label">Selected Segment</h3>
+                    {!selectedRoad ? (
+                        <div className="metrics-panel__empty-state" style={{ marginTop: 0 }}>
+                            <p className="empty-state__text">No segment selected.</p>
+                        </div>
+                    ) : (
                         <div className="detail-card">
                             <p className="detail-card__name">{selectedRoad.name}</p>
                             <DetailRow label="ID" value={selectedRoad.id} />
                             <DetailRow label="Condition" value={formatCondition(selectedRoad.condition)} />
                             <DetailRow label="Score" value={formatScore(selectedRoad.conditionScore)} />
-                            <DetailRow label="Length" value={`${selectedRoad.lengthKm} km`} />
+                            <DetailRow label="Length" value={`${selectedRoad.lengthKm.toFixed(2)} km`} />
                             <DetailRow label="Inspected" value={formatDate(selectedRoad.lastInspected)} />
                             {selectedRoad.tags && (
                                 <div className="detail-card__tags">
@@ -66,9 +75,9 @@ const MetricsPanel: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                    </div>
-                </>
-            )}
+                    )}
+                </div>
+            </div>
         </aside>
     );
 };
@@ -83,13 +92,12 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, unit }) => (
     </div>
 );
 
-interface ConditionBarProps { label: string; count: number; total: number; colorVar: string }
-const ConditionBar: React.FC<ConditionBarProps> = ({ label, count, total, colorVar }) => {
-    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+interface ConditionBarProps { label: string; count: number; pct: number; colorVar: string }
+const ConditionBar: React.FC<ConditionBarProps> = ({ label, count, pct, colorVar }) => {
     return (
         <div className="condition-bar">
             <div className="condition-bar__header">
-                <span className="condition-bar__label">{label}</span>
+                <span className="condition-bar__label">{label} ({pct}%)</span>
                 <span className="condition-bar__count">{count}</span>
             </div>
             <div className="condition-bar__track">
