@@ -29,6 +29,7 @@ interface RoadState {
     fetchAlerts: () => Promise<void>;
     submitInspection: (id: string, score: number, condition: 'GOOD'|'MODERATE'|'SEVERE', notes?: string) => Promise<void>;
     uploadImage: (roadId: string, file: File) => Promise<void>;
+    submitComplaint: (formData: FormData) => Promise<void>;
 }
 
 export const useRoadStore = create<RoadState>()(
@@ -125,6 +126,22 @@ export const useRoadStore = create<RoadState>()(
                 set({ isLoading: false });
             } catch (err: any) {
                 set({ error: err.message || 'Image analysis failed', isLoading: false });
+            }
+        },
+
+        submitComplaint: async (formData: FormData) => {
+            set({ isLoading: true, error: null });
+            try {
+                await api.submitComplaint(formData);
+                console.log("Submitting complaint via Store...");
+                
+                // Refresh data
+                await get().fetchRoads();
+                await get().fetchAnalytics();
+                set({ isLoading: false });
+            } catch (err: any) {
+                set({ error: 'Complaint submission failed', isLoading: false });
+                throw err;
             }
         }
     }))
