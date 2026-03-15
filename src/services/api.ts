@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { Road, AnalyticsSummary, ConditionReport, Alert, RoadFilters } from '../types/road';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
 export const submitComplaint = async (formData: FormData): Promise<any> => {
     const res = await axios.post(`${API_BASE}/complaints`, formData, {

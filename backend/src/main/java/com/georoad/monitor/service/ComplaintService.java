@@ -9,7 +9,6 @@ import com.georoad.monitor.repository.RoadRepository;
 import com.georoad.monitor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,16 +22,16 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.georoad.monitor.model.RoadCondition;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.core.sync.RequestBody;
 
 @Service
 @RequiredArgsConstructor
@@ -42,16 +41,27 @@ public class ComplaintService {
     private final UserRepository userRepository;
     private final RoadConditionRepository roadConditionRepository;
     private final RestTemplate restTemplate;
+    private final S3Client s3Client;
 
     @Value("${ai.service.url}")
     private String aiServiceUrl;
 
-    public ConditionReport processComplaint(String roadId, String userId, String comment, Double lat, Double lng, MultipartFile image) {
-        // 1. Save image locally
-        String imagePath = saveImage(image);
+    @Value("${supabase.s3.bucket}")
+    private String bucket;
 
-        // 2. Call AI Service
-        Map<String, Object> prediction = callAIService(imagePath);
+    @Value("${supabase.s3.endpoint}")
+    private String s3Endpoint; // To construct public URL
+
+    // We hardcode the Supabase public storage prefix to construct the final image preview URL
+    private final String SUPABASE_PUBLIC_URL_PREFIX = "https://bthspkxlifbnwfichcke.supabase.co/storage/v1/object/public/";
+
+
+    public ConditionReport processComplaint(String roadId, String userId, String comment, Double lat, Double lng, MultipartFile image) {
+        // 1. Save image to Supabase S3 Storage
+        String finalImageUrl = saveImageToS3(image);
+
+        // 2. Call AI Service (send as byte array in memory)
+        Map<String, Object> prediction = callAIService(image);
 
         // 3. Create Report
         Road road = null;
@@ -74,7 +84,7 @@ public class ComplaintService {
         report.setRoad(road);
         report.setUser(user);
         report.setUserComment(comment);
-        report.setImagePath(imagePath);
+        report.setImagePath(finalImageUrl);
         report.setPredictedCondition((String) prediction.get("predicted_condition"));
         report.setConfidenceScore((Double) prediction.get("confidence_score"));
         
@@ -98,26 +108,41 @@ public class ComplaintService {
         return reportRepository.save(report);
     }
 
-    private String saveImage(MultipartFile image) {
+    private String saveImageToS3(MultipartFile image) {
         try {
-            Path root = Paths.get("uploads");
-            if (!Files.exists(root)) Files.createDirectory(root);
-            String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-            Files.copy(image.getInputStream(), root.resolve(filename));
-            return root.resolve(filename).toString();
+            String originalFilename = image.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".") ? originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+            String filename = UUID.randomUUID().toString() + extension;
+
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(filename)
+                    .contentType(image.getContentType())
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
+
+            // Construct and return the public URL
+            return SUPABASE_PUBLIC_URL_PREFIX + bucket + "/" + filename;
         } catch (IOException e) {
-            throw new RuntimeException("Could not save image", e);
+            throw new RuntimeException("Could not upload image to Supabase Storage", e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> callAIService(String imagePath) {
+    private Map<String, Object> callAIService(MultipartFile image) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("image", new FileSystemResource(new File(imagePath)));
+            org.springframework.core.io.ByteArrayResource resource = new org.springframework.core.io.ByteArrayResource(image.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return image.getOriginalFilename() != null ? image.getOriginalFilename() : "image.jpg";
+                }
+            };
+            body.add("image", resource);
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
             return restTemplate.postForObject(aiServiceUrl, requestEntity, Map.class);

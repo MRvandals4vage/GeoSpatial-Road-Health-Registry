@@ -85,6 +85,12 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- AWS SDK for S3 (used for Supabase Storage) -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.25.10</version>
+		</dependency>
 	</dependencies>
 
 	<build>
