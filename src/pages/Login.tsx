@@ -15,7 +15,8 @@ const Login: React.FC = () => {
         e.preventDefault();
         setError('');
         try {
-            const res = await axios.post('http://localhost:8080/api/auth/login', { email, password });
+            const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+            const res = await axios.post(`${API_BASE}/auth/login`, { email, password });
             const { user, token } = res.data;
             login(user, token);
             navigate('/');

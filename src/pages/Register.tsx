@@ -15,7 +15,8 @@ const Register: React.FC = () => {
         e.preventDefault();
         setError('');
         try {
-            await axios.post('http://localhost:8080/api/auth/register', { name, email, password });
+            const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+            await axios.post(`${API_BASE}/auth/register`, { name, email, password });
             setSuccess(true);
             setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
