@@ -5,7 +5,6 @@ import com.georoad.monitor.model.Road;
 import com.georoad.monitor.model.RoadCondition;
 import com.georoad.monitor.model.RoadType;
 import com.georoad.monitor.repository.ConditionReportRepository;
-import com.georoad.monitor.repository.RoadConditionRepository;
 import com.georoad.monitor.repository.RoadRepository;
 import com.georoad.monitor.repository.RoadTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.Random;
 public class DatasetController {
 
     private final RoadRepository roadRepository;
-    private final RoadConditionRepository roadConditionRepository;
     private final RoadTypeRepository roadTypeRepository;
     private final ConditionReportRepository conditionReportRepository;
 
