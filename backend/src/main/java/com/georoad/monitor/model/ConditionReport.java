@@ -27,8 +27,15 @@ public class ConditionReport {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point pointLocation;
+
+    @com.fasterxml.jackson.annotation.JsonGetter("coordinates")
+    public double[] getCoordinates() {
+        if (pointLocation == null) return null;
+        return new double[]{pointLocation.getX(), pointLocation.getY()};
+    }
 
     private String predictedCondition;
     private Double confidenceScore;

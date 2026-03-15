@@ -4,6 +4,7 @@ import com.georoad.monitor.model.ConditionReport;
 import com.georoad.monitor.model.Road;
 import com.georoad.monitor.model.User;
 import com.georoad.monitor.repository.ConditionReportRepository;
+import com.georoad.monitor.repository.RoadConditionRepository;
 import com.georoad.monitor.repository.RoadRepository;
 import com.georoad.monitor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,20 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
+import com.georoad.monitor.model.RoadCondition;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +40,7 @@ public class ComplaintService {
     private final ConditionReportRepository reportRepository;
     private final RoadRepository roadRepository;
     private final UserRepository userRepository;
+    private final RoadConditionRepository roadConditionRepository;
     private final RestTemplate restTemplate;
 
     @Value("${ai.service.url}")
@@ -45,8 +54,21 @@ public class ComplaintService {
         Map<String, Object> prediction = callAIService(imagePath);
 
         // 3. Create Report
-        Road road = roadRepository.findById(roadId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        Road road = null;
+        if (roadId != null && !roadId.isEmpty()) {
+            road = roadRepository.findById(roadId).orElse(null);
+        }
+        if (road == null && lat != null && lng != null) {
+            road = roadRepository.findNearestRoad(lng, lat);
+        }
+        if (road == null) {
+            throw new RuntimeException("Failed to determine road for location.");
+        }
+
+        User user = null;
+        if (userId != null && !userId.isEmpty()) {
+            user = userRepository.findById(userId).orElse(null);
+        }
 
         ConditionReport report = new ConditionReport();
         report.setRoad(road);
@@ -55,6 +77,23 @@ public class ComplaintService {
         report.setImagePath(imagePath);
         report.setPredictedCondition((String) prediction.get("predicted_condition"));
         report.setConfidenceScore((Double) prediction.get("confidence_score"));
+        
+        if (lat != null && lng != null) {
+            GeometryFactory factory = new GeometryFactory();
+            Point point = factory.createPoint(new Coordinate(lng, lat));
+            point.setSRID(4326);
+            report.setPointLocation(point);
+        }
+
+        // 4. Update ROAD_CONDITION
+        RoadCondition roadCondition = roadConditionRepository.findById(road.getRoadId()).orElse(new RoadCondition());
+        roadCondition.setRoadId(road.getRoadId());
+        roadCondition.setRoad(road);
+        roadCondition.setCategory((String) prediction.get("predicted_condition"));
+        roadCondition.setConditionScore((Double) prediction.get("confidence_score") * 100); 
+        roadCondition.setSource("AI_COMPLAINT");
+        roadCondition.setLastUpdated(LocalDateTime.now());
+        roadConditionRepository.save(roadCondition);
 
         return reportRepository.save(report);
     }

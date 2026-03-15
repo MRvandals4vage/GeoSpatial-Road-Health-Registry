@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRoadStore } from '../store/roadStore';
-import * as api from '../services/api';
 
 /**
  * Fetches road data on mount and populates the global store.
@@ -11,13 +10,14 @@ export function useRoads() {
 
     useEffect(() => {
         const init = async () => {
-            await fetchRoads();
             const currentRoads = useRoadStore.getState().roads;
             if (currentRoads.length === 0) {
-                const { mockRoads } = await import('../services/mockData');
-                await api.seedBackend(mockRoads);
-                await fetchRoads();
+                // If the DB is empty, trigger the backend's robust dataset generator first
+                try {
+                    await fetch('http://localhost:8080/api/generate-dataset');
+                } catch(e) { console.error('Gen failed', e)}
             }
+            await fetchRoads();
             fetchAnalytics();
             fetchAlerts();
         };

@@ -10,13 +10,28 @@ export const submitComplaint = async (formData: FormData): Promise<any> => {
     return res.data;
 };
 
-export const fetchRoads = async (_bbox?: [number, number, number, number], filters?: RoadFilters): Promise<Road[]> => {
-    const res = await axios.get(`${API_BASE}/roads`);
-    let results = res.data;
+export const fetchRoads = async (bbox?: [number, number, number, number], filters?: RoadFilters): Promise<Road[]> => {
+    let url = `${API_BASE}/roads`;
+    if (bbox) {
+        url += `?bbox=${bbox.join(',')}`;
+    }
+    const res = await axios.get(url);
+    let results = res.data.map((r: any): Road => ({
+        id: r.roadId,
+        name: r.name,
+        type: r.type?.typeName || 'LOCAL',
+        condition: r.currentCondition?.category || 'GOOD',
+        conditionScore: r.currentCondition?.conditionScore || 100,
+        path: r.coordinates || [],
+        bbox: [0, 0, 0, 0], // Ignored on frontend right now
+        lengthKm: 1, // Optional: Calculate distance properly
+        lastInspected: r.currentCondition?.lastUpdated || new Date().toISOString(),
+        history: []
+    }));
 
     if (filters) {
         if (filters.conditions && filters.conditions.length > 0) {
-            results = results.filter((r: any) => filters.conditions.includes(r.condition));
+            results = results.filter((r: Road) => filters.conditions.includes(r.condition));
         }
     }
     return results;
@@ -39,8 +54,7 @@ export const uploadRoadImage = async (roadId: string, file: File): Promise<any> 
 };
 
 export const fetchAnalyticsSummary = async (): Promise<AnalyticsSummary> => {
-    const res = await axios.get(`${API_BASE}/roads`);
-    const roads = res.data;
+    const roads = await fetchRoads();
 
     const totalSegments = roads.length;
     let totalLengthKm = 0;
@@ -64,8 +78,8 @@ export const fetchAnalyticsSummary = async (): Promise<AnalyticsSummary> => {
 };
 
 export const fetchAlerts = async (): Promise<Alert[]> => {
-    const res = await axios.get(`${API_BASE}/alerts`);
-    return res.data;
+    // const res = await axios.get(`${API_BASE}/alerts`);
+    return [];
 };
 
 export const seedBackend = async (roads: Road[]) => {

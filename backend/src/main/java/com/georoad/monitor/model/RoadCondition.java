@@ -20,6 +20,7 @@ public class RoadCondition {
     @OneToOne
     @MapsId
     @JoinColumn(name = "road_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Road road;
 
     private String category;
