@@ -42,10 +42,16 @@ public class ConditionReport {
     private String userComment;
     private String imagePath;
     
+    // Status can be: PENDING, APPROVED, REJECTED
+    @Column(nullable = false)
+    @Builder.Default
+    private String status = "PENDING";
+    
     private LocalDateTime reportedAt;
 
     @PrePersist
     protected void onCreate() {
         reportedAt = LocalDateTime.now();
+        if (status == null) status = "PENDING";
     }
 }

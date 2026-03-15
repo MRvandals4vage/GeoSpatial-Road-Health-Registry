@@ -17,9 +17,9 @@ public class ComplaintController {
 
     @PostMapping
     public ResponseEntity<ConditionReport> submitComplaint(
-            @RequestParam("roadId") String roadId,
-            @RequestParam("userId") String userId,
-            @RequestParam("comment") String comment,
+            @RequestParam(value = "roadId", required = false) String roadId,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "comment", required = false) String comment,
             @RequestParam("latitude") Double lat,
             @RequestParam("longitude") Double lng,
             @RequestParam("image") MultipartFile image) {

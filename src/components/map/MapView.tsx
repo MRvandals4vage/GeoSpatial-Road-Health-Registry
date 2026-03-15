@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import maplibregl, { Map as MapLibreMap } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapboxOverlay } from '@deck.gl/mapbox';
-import { PathLayer } from '@deck.gl/layers';
+import { PathLayer, ScatterplotLayer } from '@deck.gl/layers';
 import * as THREE from 'three';
 import { useRoadStore } from '../../store/roadStore';
 import { CONDITION_COLOR, CONDITION_HIGHLIGHT } from '../../types/road';
@@ -125,6 +125,8 @@ const MapView: React.FC = () => {
     const selectedRoad = useRoadStore((s) => s.selectedRoad);
     const setSelected = useRoadStore((s) => s.setSelectedRoad);
     const fetchRoads = useRoadStore((s) => s.fetchRoads);
+    const complaints = useRoadStore((s) => s.complaints);
+    const fetchComplaints = useRoadStore((s) => s.fetchComplaints);
     const isHeatmapMode = useRoadStore((s) => s.isHeatmapMode);
 
     useEffect(() => {
@@ -149,8 +151,8 @@ const MapView: React.FC = () => {
         const map = new maplibregl.Map({
             container: mapContainer.current,
             style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-            center: [77.1025, 28.7041],
-            zoom: 12,
+            center: [80.035, 12.825],
+            zoom: 14,
             pitch: 60,
         });
 
@@ -166,7 +168,7 @@ const MapView: React.FC = () => {
 
         map.on('style.load', () => {
             if (!map.getLayer('three-layer')) {
-                const threeLayer = createThreeLayer('three-layer', [77.1025, 28.7041]);
+                const threeLayer = createThreeLayer('three-layer', [80.035, 12.825]);
                 map.addLayer(threeLayer as unknown as maplibregl.CustomLayerInterface);
             }
         });
@@ -175,6 +177,7 @@ const MapView: React.FC = () => {
         const handleMoveEnd = () => {
             const bounds = map.getBounds();
             fetchRoads([bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()]);
+            fetchComplaints();
         };
         map.on('moveend', handleMoveEnd);
 
@@ -203,7 +206,7 @@ const MapView: React.FC = () => {
             roads.forEach(r => {
                 if (r.history && r.history.length > 0) {
                     r.history.forEach(h => {
-                        const t = new Date(h.timestamp).getTime();
+                        const t = new Date(h.reportedAt).getTime();
                         if (t < min) min = t;
                         if (t > max) max = t;
                     });
@@ -226,25 +229,28 @@ const MapView: React.FC = () => {
             // Find the most recent report BEFORE playbackDate
             let bestRep = road.history[0];
             for (let i = 0; i < road.history.length; i++) {
-                if (new Date(road.history[i].timestamp).getTime() <= playbackDate) {
+                if (new Date(road.history[i].reportedAt).getTime() <= playbackDate) {
                     bestRep = road.history[i];
                 }
             }
-            return bestRep.conditionCategory;
+            return bestRep.predictedCondition;
         };
 
         if (isHeatmapMode) {
             import('@deck.gl/aggregation-layers').then(({ HeatmapLayer }) => {
-                const heatmapLayer = new HeatmapLayer<Road>({
-                    id: 'road-heatmap-layer',
-                    data: roads,
-                    getPosition: (d: Road) => d.path[0], // using first point for heatmap
-                    getWeight: (d: Road) => {
-                        const condition = getConditionForDate(d);
-                        return condition === 'SEVERE' ? 100 : condition === 'MODERATE' ? 50 : 10;
-                    },
-                    radiusPixels: 50,
-                    intensity: 1,
+                // Combine roads and complaints for heatmap
+                const mapData = [
+                    ...roads.map(r => ({ pos: r.path[0], weight: getConditionForDate(r) === 'SEVERE' ? 100 : getConditionForDate(r) === 'MODERATE' ? 50 : 10 })),
+                    ...complaints.map(c => ({ pos: c.coordinates, weight: c.predictedCondition === 'SEVERE' ? 200 : c.predictedCondition === 'MODERATE' ? 100 : 50 }))
+                ].filter(d => d.pos);
+
+                const heatmapLayer = new HeatmapLayer({
+                    id: 'combined-heatmap-layer',
+                    data: mapData,
+                    getPosition: (d: any) => d.pos,
+                    getWeight: (d: any) => d.weight,
+                    radiusPixels: 60,
+                    intensity: 1.5,
                     threshold: 0.1
                 });
                 overlayRef.current?.setProps({ layers: [heatmapLayer] });
@@ -255,16 +261,21 @@ const MapView: React.FC = () => {
         const pathLayer = new PathLayer<Road>({
             id: 'road-path-layer',
             data: roads,
-            getPath: (d: Road) => d.path,
+            getPath: (d: Road) => {
+                const condition = getConditionForDate(d);
+                const elevate = condition === 'SEVERE' ? 150 : condition === 'MODERATE' ? 30 : 2;
+                return d.path.map(p => [p[0], p[1], elevate]) as any;
+            },
             getColor: (d: Road) => {
                 const condition = getConditionForDate(d);
                 return selectedRoad?.id === d.id ? CONDITION_HIGHLIGHT[condition] : CONDITION_COLOR[condition];
             },
-            widthMinPixels: 4,
+            widthMinPixels: 6,
             widthScale: 2,
             pickable: true,
             updateTriggers: {
-                getColor: [selectedRoad, playbackDate, isHeatmapMode]
+                getColor: [selectedRoad, playbackDate, isHeatmapMode],
+                getPath: [playbackDate, isHeatmapMode]
             },
             onHover: (info) => {
                 const el = document.getElementById('map-tooltip');
@@ -274,7 +285,7 @@ const MapView: React.FC = () => {
                     const condition = getConditionForDate(road);
                     el.style.top = `${y + 10}px`;
                     el.style.left = `${x + 10}px`;
-                    el.innerHTML = `<strong>${road.name}</strong><br/>Condition: ${condition}`;
+                    el.innerHTML = `<strong>${road.name}</strong><br/>Condition: ${condition}<br/>Score: ${road.conditionScore?.toFixed(1) || 'N/A'}`;
                     el.style.display = 'block';
                 } else if (el) {
                     el.style.display = 'none';
@@ -288,9 +299,42 @@ const MapView: React.FC = () => {
             },
         });
 
-        layers.push(pathLayer);
+        const complaintsLayer = new ScatterplotLayer<RoadCondition>({
+            id: 'complaints-marker-layer',
+            data: complaints as any,
+            getPosition: (d: any) => d.coordinates,
+            getFillColor: (d: any) => CONDITION_COLOR[d.predictedCondition as RoadCondition] || [255, 255, 255, 200],
+            getRadius: 50,
+            radiusMinPixels: 8,
+            radiusMaxPixels: 24,
+            pickable: true,
+            stroked: true,
+            getLineColor: [255, 255, 255, 200],
+            lineWidthMinPixels: 2,
+            onHover: (info) => {
+                const el = document.getElementById('map-tooltip');
+                if (info.object && el) {
+                    const { x, y } = info;
+                    const c = info.object as any;
+                    el.style.top = `${y + 10}px`;
+                    el.style.left = `${x + 10}px`;
+                    el.innerHTML = `
+                        <strong>Complaint Marker</strong><br/>
+                        Prediction: ${c.predictedCondition}<br/>
+                        Confidence: ${(c.confidenceScore * 100).toFixed(1)}%<br/>
+                        Comment: ${c.userComment || 'None'}<br/>
+                        Date: ${new Date(c.reportedAt).toLocaleDateString()}
+                    `;
+                    el.style.display = 'block';
+                } else if (!info.object && !document.querySelector('.deck-tooltip')) {
+                    if (el) el.style.display = 'none';
+                }
+            }
+        });
+
+        layers.push(pathLayer, complaintsLayer);
         overlayRef.current.setProps({ layers });
-    }, [roads, selectedRoad, setSelected, isHeatmapMode, playbackDate]);
+    }, [roads, complaints, selectedRoad, setSelected, isHeatmapMode, playbackDate]);
 
     if (webglError) {
         return (

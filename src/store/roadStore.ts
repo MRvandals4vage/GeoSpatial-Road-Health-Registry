@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Road, RoadFilters, AnalyticsSummary, Alert } from '../types/road';
+import type { Road, RoadFilters, AnalyticsSummary, Alert, ConditionReport } from '../types/road';
 import * as api from '../services/api';
 
 interface RoadState {
     roads: Road[];
+    complaints: ConditionReport[];
     selectedRoad: Road | null;
     isLoading: boolean;
     error: string | null;
@@ -25,6 +26,7 @@ interface RoadState {
     
     // ── Async Actions ───────────────────────────────────
     fetchRoads: (bbox?: [number, number, number, number]) => Promise<void>;
+    fetchComplaints: () => Promise<void>;
     fetchAnalytics: () => Promise<void>;
     fetchAlerts: () => Promise<void>;
     submitInspection: (id: string, score: number, condition: 'GOOD'|'MODERATE'|'SEVERE', notes?: string) => Promise<void>;
@@ -35,6 +37,7 @@ interface RoadState {
 export const useRoadStore = create<RoadState>()(
     devtools((set, get) => ({
         roads: [],
+        complaints: [],
         selectedRoad: null,
         isLoading: false,
         error: null,
@@ -83,6 +86,15 @@ export const useRoadStore = create<RoadState>()(
                 set({ analytics: summary });
             } catch (err: any) {
                 console.error("fetchAnalytics error:", err);
+            }
+        },
+
+        fetchComplaints: async () => {
+            try {
+                const results = await api.fetchComplaints();
+                set({ complaints: results });
+            } catch (err: any) {
+                console.error("fetchComplaints error:", err);
             }
         },
 
@@ -137,6 +149,7 @@ export const useRoadStore = create<RoadState>()(
                 
                 // Refresh data
                 await get().fetchRoads();
+                await get().fetchComplaints();
                 await get().fetchAnalytics();
                 set({ isLoading: false });
             } catch (err: any) {

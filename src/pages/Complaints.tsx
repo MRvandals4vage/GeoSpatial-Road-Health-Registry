@@ -6,9 +6,7 @@ import './Complaints.css';
 
 const Complaints: React.FC = () => {
     const user = useAuthStore(s => s.user);
-    const roads = useRoadStore(s => s.roads);
     const submitComplaint = useRoadStore(s => s.submitComplaint);
-    const [selectedRoadId, setSelectedRoadId] = useState('');
     const [comment, setComment] = useState('');
     const [image, setImage] = useState<File | null>(null);
     const [location, setLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -28,8 +26,8 @@ const Complaints: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!selectedRoadId || !image || !location) {
-            setStatus({ type: 'error', msg: 'Please select a road, upload an image and allow location access.' });
+        if (!image || !location) {
+            setStatus({ type: 'error', msg: 'Please provide visual evidence and ensure GPS is located to diagnose damage location.' });
             return;
         }
 
@@ -37,7 +35,6 @@ const Complaints: React.FC = () => {
         setStatus(null);
 
         const formData = new FormData();
-        formData.append('roadId', selectedRoadId);
         formData.append('userId', user?.userId || '');
         formData.append('comment', comment);
         formData.append('latitude', location.lat.toString());
@@ -49,7 +46,6 @@ const Complaints: React.FC = () => {
             setStatus({ type: 'success', msg: 'Complaint submitted successfully! AI analysis is in progress.' });
             setComment('');
             setImage(null);
-            setSelectedRoadId('');
         } catch (err) {
             setStatus({ type: 'error', msg: 'Submission failed. Please try again later.' });
         } finally {
@@ -68,19 +64,7 @@ const Complaints: React.FC = () => {
                     </header>
 
                     <form className="complaints-form" onSubmit={handleSubmit}>
-                        <div className="form-row">
-                            <label>Target Road Segment</label>
-                            <select 
-                                value={selectedRoadId} 
-                                onChange={(e) => setSelectedRoadId(e.target.value)}
-                                required
-                            >
-                                <option value="">Select a segment...</option>
-                                {roads.map(r => (
-                                    <option key={r.id} value={r.id}>{r.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                        {/* Target road segment explicitly removed. GPS automatically dictates nearest segment association by the AI service natively. */}
 
                         <div className="form-row">
                             <label>Visual Evidence (Image Upload)</label>

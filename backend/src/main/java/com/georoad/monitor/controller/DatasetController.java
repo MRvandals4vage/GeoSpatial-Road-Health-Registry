@@ -37,8 +37,8 @@ public class DatasetController {
         Random random = new Random();
         GeometryFactory factory = new GeometryFactory();
 
-        // Target: 1000 roads
-        int numRoads = 1000;
+        // Target: 100 roads
+        int numRoads = 100;
 
         // Base coordinates for the city (Kattankulathur and Potheri areas in Chennai)
         double centerLat = 12.825;
@@ -115,6 +115,7 @@ public class DatasetController {
                 report.setPointLocation(factory.createPoint(new Coordinate(startLng, startLat)));
                 report.setPredictedCondition(condition.getCategory());
                 report.setConfidenceScore(condition.getConditionScore() / 100.0);
+                report.setStatus("APPROVED");
                 report.setUserComment("Generated historical record " + r);
                 report.setReportedAt(LocalDateTime.now().minusDays(random.nextInt(60) + 30));
                 conditionReportRepository.save(report);

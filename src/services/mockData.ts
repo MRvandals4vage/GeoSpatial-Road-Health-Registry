@@ -23,20 +23,20 @@ function generateHistory(roadId: string, currentScore: number): ConditionReport[
         else if (score < 75) cat = 'MODERATE';
         
         history.push({
-            id: `rep_${roadId}_${i}`,
-            roadId,
-            conditionScore: score,
-            conditionCategory: cat,
-            timestamp: date.toISOString(),
-            source: Math.random() > 0.3 ? 'AI' : 'MANUAL',
-            notes: Math.random() > 0.5 ? 'Routine inspection' : 'Reported pothole'
-        });
+            reportId: `rep_${roadId}_${i}`,
+            predictedCondition: cat as 'GOOD'|'MODERATE'|'SEVERE',
+            reportedAt: date.toISOString(),
+            confidenceScore: score / 100,
+            userComment: Math.random() > 0.5 ? 'Routine inspection' : 'Reported pothole',
+            user: Math.random() > 0.3 ? null : { id: 'admin', username: 'mockAdmin', email: '', role: 'ADMIN' },
+            coordinates: [0, 0]
+        } as ConditionReport);
         
         // score used to be better in the past
         score = Math.min(100, score + Math.random() * 15);
     }
     
-    return history.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    return history.sort((a, b) => new Date(a.reportedAt).getTime() - new Date(b.reportedAt).getTime());
 }
 
 export function generateMockRoads(count: number): Road[] {
@@ -90,7 +90,7 @@ export function generateMockRoads(count: number): Road[] {
             path,
             bbox,
             lengthKm,
-            lastInspected: history[history.length - 1].timestamp,
+            lastInspected: history[history.length - 1].reportedAt,
             conditionScore: score,
             tags: ['tag1', 'tag2'],
             history
@@ -109,7 +109,7 @@ export const mockAlerts: Alert[] = mockRoads
         roadId: r.id,
         roadName: r.name,
         severity: r.conditionScore < 20 ? 'HIGH' : (r.conditionScore < 30 ? 'MEDIUM' : 'LOW'),
-        previousScore: r.history.length > 1 ? r.history[r.history.length - 2].conditionScore : r.conditionScore + 10,
+        previousScore: r.history && r.history.length > 1 ? r.history[r.history.length - 2].confidenceScore * 100 : r.conditionScore + 10,
         currentScore: r.conditionScore,
         timestamp: r.lastInspected,
         resolved: false

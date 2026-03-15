@@ -6,14 +6,15 @@ export type RoadType = 'HIGHWAY' | 'ARTERIAL' | 'LOCAL' | 'RESIDENTIAL';
 // ─── Condition History ──────────────────────────────────────────────────────
 
 export interface ConditionReport {
-  id: string;
-  roadId: string;
-  conditionScore: number;
-  conditionCategory: RoadCondition;
-  timestamp: string; // ISO string
-  source: 'AI' | 'MANUAL';
-  notes?: string;
-  imageUrl?: string;
+  reportId: string;
+  road?: Road;
+  user?: any;
+  predictedCondition: RoadCondition;
+  confidenceScore: number;
+  userComment?: string;
+  imagePath?: string;
+  reportedAt: string; // ISO string
+  coordinates?: [number, number];
 }
 
 // ─── Alerts ─────────────────────────────────────────────────────────────────

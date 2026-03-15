@@ -42,6 +42,27 @@ export const fetchRoadHistory = async (roadId: string): Promise<ConditionReport[
     return res.data;
 };
 
+export const fetchComplaints = async (): Promise<ConditionReport[]> => {
+    const res = await axios.get(`${API_BASE}/complaints`);
+    return res.data;
+};
+
+export const adminApproveComplaint = async (id: string): Promise<any> => {
+    return (await axios.post(`${API_BASE}/admin/complaints/${id}/approve`)).data;
+};
+
+export const adminRejectComplaint = async (id: string): Promise<any> => {
+    return (await axios.post(`${API_BASE}/admin/complaints/${id}/reject`)).data;
+};
+
+export const adminOverrideComplaint = async (id: string, newCondition: string): Promise<any> => {
+    return (await axios.post(`${API_BASE}/admin/complaints/${id}/override?newCondition=${newCondition}`)).data;
+};
+
+export const adminDeleteComplaint = async (id: string): Promise<any> => {
+    return (await axios.delete(`${API_BASE}/admin/complaints/${id}`)).data;
+};
+
 export const uploadRoadImage = async (roadId: string, file: File): Promise<any> => {
     const formData = new FormData();
     formData.append('image', file);

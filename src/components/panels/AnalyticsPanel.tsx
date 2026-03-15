@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRoadStore } from '../../store/roadStore';
+import * as api from '../../services/api';
+import type { ConditionReport } from '../../types/road';
 import { formatCondition } from '../../utils/roadUtils';
 import type { Road, RoadCondition, RoadType } from '../../types/road';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
@@ -50,12 +52,28 @@ const AnalyticsPanel: React.FC = () => {
         handleFilterChange('types', next);
     };
 
+    const [historyData, setHistoryData] = useState<ConditionReport[]>([]);
+    const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
+    useEffect(() => {
+        if (selectedRoad) {
+            setIsLoadingHistory(true);
+            api.fetchRoadHistory(selectedRoad.id).then(res => {
+                setHistoryData(res.sort((a,b) => new Date(a.reportedAt).getTime() - new Date(b.reportedAt).getTime()));
+                setIsLoadingHistory(false);
+            }).catch(err => {
+                console.error("Failed to load history", err);
+                setIsLoadingHistory(false);
+            });
+        }
+    }, [selectedRoad]);
+
     // If road selected, show road details + history chart + inspection form
     if (selectedRoad) {
-        const chartData = selectedRoad.history?.map(h => ({
-            date: new Date(h.timestamp).toLocaleDateString(),
-            score: h.conditionScore
-        })) || [];
+        const chartData = historyData.map(h => ({
+            date: new Date(h.reportedAt).toLocaleDateString(),
+            score: Math.round(h.confidenceScore * 100)
+        }));
 
         return (
             <aside className="analytics-panel">
@@ -88,21 +106,30 @@ const AnalyticsPanel: React.FC = () => {
                     <div className="status-badge" data-status={selectedRoad.condition}>
                         {formatCondition(selectedRoad.condition)} - Risk: {selectedRoad.condition === 'SEVERE' ? 'CRITICAL' : selectedRoad.condition === 'MODERATE' ? 'ELEVATED' : 'NOMINAL'}
                     </div>
+                    
+                    <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#94a3b8' }}>
+                         <p>Last Inspected: {new Date(selectedRoad.lastInspected).toLocaleString()}</p>
+                         {historyData.length > 0 && <p>Latest Source: {historyData[historyData.length-1].user ? 'Manual' : 'AI Inference'}</p>}
+                    </div>
 
                     <div className="history-chart" style={{ height: '180px', marginTop: '10px' }}>
                         <h4 style={{marginBottom: '10px', fontSize: '0.75rem', textTransform: 'uppercase', color: '#64748b'}}>Condition Trend</h4>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} />
-                                <XAxis dataKey="date" hide />
-                                <YAxis domain={[0, 100]} hide />
-                                <RechartsTooltip 
-                                    contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px'}}
-                                    itemStyle={{color: '#4fd1c5'}}
-                                />
-                                <Line type="monotone" dataKey="score" stroke="#4fd1c5" strokeWidth={3} dot={{ r: 4, fill: '#4fd1c5' }} activeDot={{ r: 6 }} />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        {isLoadingHistory ? (
+                            <div style={{ color: '#4fd1c5', fontSize: '0.8rem', textAlign: 'center', marginTop: '40px' }}>Loading timeline...</div>
+                        ) : (
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} />
+                                    <XAxis dataKey="date" hide />
+                                    <YAxis domain={[0, 100]} hide />
+                                    <RechartsTooltip 
+                                        contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px'}}
+                                        itemStyle={{color: '#4fd1c5'}}
+                                    />
+                                    <Line type="monotone" dataKey="score" stroke="#4fd1c5" strokeWidth={3} dot={{ r: 4, fill: '#4fd1c5' }} activeDot={{ r: 6 }} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
 
                     {!isInspecting ? (
@@ -165,8 +192,8 @@ const AnalyticsPanel: React.FC = () => {
                             </label>
                             <textarea placeholder="Observation notes..." value={notesInput} onChange={e => setNotesInput(e.target.value)} rows={2} style={{background: '#020617', border: '1px solid #1e293b', borderRadius: '6px', color: 'white', padding: '8px', fontSize: '0.8rem'}} />
                             <div className="form-actions">
-                                <button type="button" onClick={() => setIsInspecting(false)}>Cancel</button>
-                                <button type="submit" className="submit-btn" style={{background: '#4fd1c5', color: '#020617'}}>Submit</button>
+                                <button type="button" onClick={() => setIsInspecting(false)} style={{background: 'transparent', border: '1px solid #4fd1c5', color: '#4fd1c5', padding: '8px 16px', borderRadius: '4px'}}>Cancel</button>
+                                <button type="submit" className="submit-btn" style={{background: '#4fd1c5', color: '#020617', padding: '8px 16px', borderRadius: '4px', border: 'none'}}>Submit</button>
                             </div>
                         </form>
                     )}
