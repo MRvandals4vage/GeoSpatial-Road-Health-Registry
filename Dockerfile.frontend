@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package config and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy source code
+COPY . .
+
+EXPOSE 5173
+
+# Start Vite with --host so it's accessible outside the container network
+CMD ["npm", "run", "dev", "--", "--host"]
