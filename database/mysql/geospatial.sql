@@ -363,3 +363,10 @@ JOIN Location l ON r.LocationID = l.LocationID
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID
 JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID;
 
+-- Views
+CREATE VIEW Road_Summary AS
+SELECT r.Name, l.City, rc.Condition_Score
+FROM Road r
+JOIN Location l ON r.LocationID = l.LocationID
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID;
+
