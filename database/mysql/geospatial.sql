@@ -377,9 +377,25 @@ GROUP BY cc.Category_Name;
 
 
 -- SET Operations
+
+-- Q1
 SELECT RoadID FROM Road_Condition
 UNION
 SELECT RoadID FROM Condition_Report;
+
+-- Q2
+SELECT cc.Category_Name,
+       MAX(rc.Condition_Score) AS Max_Score,
+       MIN(rc.Condition_Score) AS Min_Score
+FROM Road_Condition rc
+JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID
+GROUP BY cc.Category_Name;
+
+-- Q3
+SELECT RoadID FROM Condition_Report
+WHERE RoadID NOT IN (
+    SELECT RoadID FROM Road_Image
+);
 
 -- Subqueries
 SELECT r.Name, rc.Condition_Score
