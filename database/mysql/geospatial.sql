@@ -398,6 +398,8 @@ WHERE RoadID NOT IN (
 );
 
 -- Subqueries
+
+-- Q1
 SELECT r.Name, rc.Condition_Score
 FROM Road r
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID
@@ -405,12 +407,45 @@ WHERE rc.Condition_Score < (
     SELECT AVG(Condition_Score) FROM Road_Condition
 );
 
+-- Q2
+SELECT r.Name, rc.Condition_Score
+FROM Road r
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+WHERE rc.Condition_Score = (
+    SELECT MAX(Condition_Score) FROM Road_Condition
+);
+
+-- Q3
+SELECT l.City
+FROM Road r
+JOIN Location l ON r.LocationID = l.LocationID
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+GROUP BY l.City
+HAVING AVG(rc.Condition_Score) >
+(
+    SELECT AVG(Condition_Score) FROM Road_Condition
+);
+
 -- Joins
+
+-- Q1
 SELECT r.Name, l.City, cc.Category_Name, rc.Condition_Score
 FROM Road r
 JOIN Location l ON r.LocationID = l.LocationID
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID
 JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID;
+
+-- Q2
+SELECT r.Name, ri.Image_Path, rc.Condition_Score
+FROM Road r
+LEFT JOIN Road_Image ri ON r.RoadID = ri.RoadID
+LEFT JOIN Road_Condition rc ON r.RoadID = rc.RoadID;
+
+-- Q3
+SELECT u.UserName, r.Name, cr.Predicted_Condition
+FROM Condition_Report cr
+JOIN Users u ON cr.UserID = u.UserID
+JOIN Road r ON cr.RoadID = r.RoadID;
 
 -- Views
 CREATE VIEW Road_Summary AS
