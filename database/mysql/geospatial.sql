@@ -331,17 +331,50 @@ SELECT u.UserName, a.Action_Type, a.Action_Time
 FROM Admin_Action a
 JOIN Users u ON a.UserID = u.UserID;
 
--- CONSTRAINTS
+-- CHAPTER 3
 
+-- CONSTRAINTS
+-- Q1
 ALTER TABLE Road_Condition
 ADD CONSTRAINT chk_score CHECK (Condition_Score BETWEEN 0 AND 100);
+select * from Road_Condition;
+
+-- Q2
+ALTER TABLE Road_Type
+ADD CONSTRAINT unique_type_name UNIQUE (Type_Name);
+
+Select * from Road_Type;
+
+-- Q3
+ALTER TABLE Users
+ADD CONSTRAINT chk_role
+CHECK (Role IN ('USER','ADMIN'));
+
+Select * from Users;
 
 -- Aggregate functions
+
+-- Q1
 SELECT l.City, AVG(rc.Condition_Score) AS Avg_Score
 FROM Road r
 JOIN Location l ON r.LocationID = l.LocationID
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID
 GROUP BY l.City;
+
+-- Q2
+SELECT l.State, COUNT(r.RoadID) AS Total_Roads
+FROM Road r
+JOIN Location l ON r.LocationID = l.LocationID
+GROUP BY l.State;
+
+-- Q3
+SELECT cc.Category_Name,
+       MAX(rc.Condition_Score) AS Max_Score,
+       MIN(rc.Condition_Score) AS Min_Score
+FROM Road_Condition rc
+JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID
+GROUP BY cc.Category_Name;
+
 
 -- SET Operations
 SELECT RoadID FROM Road_Condition
@@ -370,6 +403,8 @@ FROM Road r
 JOIN Location l ON r.LocationID = l.LocationID
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID;
 
+Select * from Road_Summary;
+
 -- Triggers
 DELIMITER $$
 
@@ -382,10 +417,9 @@ END$$
 
 DELIMITER ;
 
+Select * from update_timestamp;
 -- Cursors
-
 DELIMITER $$
-
 CREATE PROCEDURE GetLowConditionRoads()
 BEGIN
     DECLARE done INT DEFAULT FALSE;
@@ -400,7 +434,6 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     OPEN cur;
-
     read_loop: LOOP
         FETCH cur INTO rname;
         IF done THEN
@@ -411,5 +444,7 @@ BEGIN
 
     CLOSE cur;
 END$$
-
 DELIMITER ;
+
+CALL GetLowConditionRoads();
+
