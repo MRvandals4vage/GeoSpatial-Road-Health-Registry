@@ -370,3 +370,14 @@ FROM Road r
 JOIN Location l ON r.LocationID = l.LocationID
 JOIN Road_Condition rc ON r.RoadID = rc.RoadID;
 
+-- Triggers
+DELIMITER $$
+
+CREATE TRIGGER update_timestamp
+BEFORE UPDATE ON Road_Condition
+FOR EACH ROW
+BEGIN
+   SET NEW.Last_Updated = NOW();
+END$$
+
+DELIMITER ;
