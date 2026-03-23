@@ -381,3 +381,35 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- Cursors
+
+DELIMITER $$
+
+CREATE PROCEDURE GetLowConditionRoads()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE rname VARCHAR(255);
+    
+    DECLARE cur CURSOR FOR
+    SELECT r.Name
+    FROM Road r
+    JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+    WHERE rc.Condition_Score < 50;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO rname;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT rname;
+    END LOOP;
+
+    CLOSE cur;
+END$$
+
+DELIMITER ;
