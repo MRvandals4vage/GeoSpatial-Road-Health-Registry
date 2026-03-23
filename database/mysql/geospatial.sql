@@ -236,18 +236,65 @@ select * from Road_Condition;
 
 INSERT INTO CNN_Model VALUES
 ('m1', 'RoadNet', 'v1.0', 0.92);
+INSERT INTO CNN_Model VALUES
+('m2','RoadNet','v2.0',0.94),
+('m3','DeepRoad','v1.0',0.91),
+('m4','SmartDetect','v3.1',0.96);
 
+select * from cnn_model;
 
+-- Condition Report
 INSERT INTO Condition_Report VALUES
 ('rep1', 'r1', 'u1', 'm1', 'Moderate', 0.87, NOW());
+INSERT INTO Condition_Report VALUES
+('rep2','r2','u1','m2','Good',0.92,NOW()),
+('rep3','r3','u2','m3','Poor',0.85,NOW()),
+('rep4','r4','u1','m1','Moderate',0.88,NOW()),
+('rep5','r5','u2','m2','Good',0.93,NOW()),
+('rep6','r6','u1','m3','Poor',0.80,NOW()),
+('rep7','r7','u2','m4','Moderate',0.90,NOW()),
+('rep8','r8','u1','m2','Good',0.95,NOW()),
+('rep9','r9','u2','m1','Moderate',0.87,NOW()),
+('rep10','r10','u1','m3','Poor',0.82,NOW()),
+('rep11','r11','u2','m4','Moderate',0.91,NOW());
 
+select * from Condition_report;
 
+-- Road Images
 INSERT INTO Road_Image VALUES
 ('img1', 'r1', '/images/road1.jpg', NOW());
+INSERT INTO Road_Image VALUES
+('img2','r2','/images/r2.jpg',NOW()),
+('img3','r3','/images/r3.jpg',NOW()),
+('img4','r4','/images/r4.jpg',NOW()),
+('img5','r5','/images/r5.jpg',NOW()),
+('img6','r6','/images/r6.jpg',NOW()),
+('img7','r7','/images/r7.jpg',NOW()),
+('img8','r8','/images/r8.jpg',NOW()),
+('img9','r9','/images/r9.jpg',NOW()),
+('img10','r10','/images/r10.jpg',NOW()),
+('img11','r11','/images/r11.jpg',NOW()),
+('img12','r12','/images/r12.jpg',NOW());
 
+select * from Road_image;
 
+-- Admin Action
 INSERT INTO Admin_Action VALUES
 ('a1', 'u2', 'r1', 'Marked for Repair', NOW());
+INSERT INTO Admin_Action VALUES
+('a2','u2','r2','Inspection Scheduled',NOW()),
+('a3','u2','r3','Repair Initiated',NOW()),
+('a4','u2','r4','Marked Safe',NOW()),
+('a5','u2','r5','Maintenance Completed',NOW()),
+('a6','u2','r6','Inspection Scheduled',NOW()),
+('a7','u2','r7','Repair Initiated',NOW()),
+('a8','u2','r8','Marked Safe',NOW()),
+('a9','u2','r9','Maintenance Completed',NOW()),
+('a10','u2','r10','Inspection Scheduled',NOW()),
+('a11','u2','r11','Repair Initiated',NOW()),
+('a12','u2','r12','Marked Safe',NOW());
+
+select * from Admin_action;
 
 UPDATE Road SET LocationID = 'l2' WHERE RoadID = 'r2';
 UPDATE Road SET LocationID = 'l3' WHERE RoadID = 'r3';
@@ -284,3 +331,7 @@ SELECT u.UserName, a.Action_Type, a.Action_Time
 FROM Admin_Action a
 JOIN Users u ON a.UserID = u.UserID;
 
+-- CONSTRAINTS
+
+ALTER TABLE Road_Condition
+ADD CONSTRAINT chk_score CHECK (Condition_Score BETWEEN 0 AND 100);
