@@ -335,3 +335,31 @@ JOIN Users u ON a.UserID = u.UserID;
 
 ALTER TABLE Road_Condition
 ADD CONSTRAINT chk_score CHECK (Condition_Score BETWEEN 0 AND 100);
+
+-- Aggregate functions
+SELECT l.City, AVG(rc.Condition_Score) AS Avg_Score
+FROM Road r
+JOIN Location l ON r.LocationID = l.LocationID
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+GROUP BY l.City;
+
+-- SET Operations
+SELECT RoadID FROM Road_Condition
+UNION
+SELECT RoadID FROM Condition_Report;
+
+-- Subqueries
+SELECT r.Name, rc.Condition_Score
+FROM Road r
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+WHERE rc.Condition_Score < (
+    SELECT AVG(Condition_Score) FROM Road_Condition
+);
+
+-- Joins
+SELECT r.Name, l.City, cc.Category_Name, rc.Condition_Score
+FROM Road r
+JOIN Location l ON r.LocationID = l.LocationID
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID;
+
