@@ -105,12 +105,13 @@ DESC Admin_Action;
 
 
 /* DML COMMANDS */
-
+-- Users 
 INSERT INTO Users VALUES
 ('u1', 'Alice', 'alice@gmail.com', 'USER', 'pass123'),
 ('u2', 'Bob', 'bob@gmail.com', 'ADMIN', 'pass456');
 SELECT * FROM Users;
 
+-- Location Values
 INSERT INTO Location VALUES
 ('l1', 'Mumbai', 'Maharashtra', ST_GeomFromText('POLYGON((72.8 19.0, 72.9 19.0, 72.9 19.1, 72.8 19.1, 72.8 19.0))', 4326));
 SELECT * FROM Location;
@@ -138,14 +139,16 @@ INSERT INTO Location VALUES
 
 Select * from Location;
 
+-- Road Types
 INSERT INTO Road_Type VALUES
 ('t1', 'Highway'),
 ('t2', 'Street');
 
+-- (in case)
+-- DELETE FROM Road
+-- WHERE RoadID IN ('r11','r12','r13','r14','r15','r16','r17','r18','r19','r20');
 
-DELETE FROM Road
-WHERE RoadID IN ('r11','r12','r13','r14','r15','r16','r17','r18','r19','r20');
-
+-- Road Values
 INSERT INTO Road VALUES
 -- Mumbai(l1)
 ('r1', 123456, 'Main Road',
@@ -202,20 +205,34 @@ INSERT INTO Road VALUES
 ('r20', 200010, 'Sector 17 Road',
  ST_GeomFromText('LINESTRING(76.78 30.74, 76.79 30.75)', 4326),
  'l11', 't2');
- 
- 
+  
  select * from road;
 
  
- 
+-- Condition Category Values 
  INSERT INTO Condition_Category VALUES
 ('c1', 'Good'),
 ('c2', 'Moderate'),
 ('c3', 'Poor');
 
+
+-- Road Condition Values
+
 INSERT INTO Road_Condition VALUES
 ('r1', 'c2', 65.5, 'AI_Model', NOW());
+INSERT INTO Road_Condition VALUES
+('r2','c1',85.0,'Sensor',NOW()),
+('r3','c3',40.2,'User',NOW()),
+('r4','c2',60.0,'AI',NOW()),
+('r5','c1',90.0,'Sensor',NOW()),
+('r6','c3',35.0,'User',NOW()),
+('r7','c2',70.0,'AI',NOW()),
+('r8','c1',88.0,'Sensor',NOW()),
+('r9','c2',68.0,'AI',NOW()),
+('r10','c3',30.0,'User',NOW()),
+('r11','c2',66.0,'AI',NOW());
 
+select * from Road_Condition;
 
 INSERT INTO CNN_Model VALUES
 ('m1', 'RoadNet', 'v1.0', 0.92);
