@@ -448,6 +448,8 @@ JOIN Users u ON cr.UserID = u.UserID
 JOIN Road r ON cr.RoadID = r.RoadID;
 
 -- Views
+
+-- Q1
 CREATE VIEW Road_Summary AS
 SELECT r.Name, l.City, rc.Condition_Score
 FROM Road r
@@ -456,7 +458,27 @@ JOIN Road_Condition rc ON r.RoadID = rc.RoadID;
 
 Select * from Road_Summary;
 
+-- Q2
+CREATE VIEW Road_Category_View AS
+SELECT r.Name, cc.Category_Name
+FROM Road r
+JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+JOIN Condition_Category cc ON rc.CategoryID = cc.CategoryID;
+
+-- Q3
+CREATE VIEW Admin_Action_View AS
+SELECT u.UserName, a.Action_Type, a.Action_Time
+FROM Admin_Action a
+JOIN Users u ON a.UserID = u.UserID;
+
+Select * from Admin_Action_View;
+
+Select * from Road_Category_View;
+
+
 -- Triggers
+
+-- Q1
 DELIMITER $$
 
 CREATE TRIGGER update_timestamp
@@ -469,7 +491,38 @@ END$$
 DELIMITER ;
 
 Select * from update_timestamp;
+
+-- Q2
+DELIMITER $$
+
+CREATE TRIGGER check_score_before_insert
+BEFORE INSERT ON Road_Condition
+FOR EACH ROW
+BEGIN
+    IF NEW.Condition_Score > 100 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Score cannot exceed 100';
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Q3
+DELIMITER $$
+
+CREATE TRIGGER log_admin_action
+AFTER UPDATE ON Road_Condition
+FOR EACH ROW
+BEGIN
+    INSERT INTO Admin_Action
+    VALUES (UUID(), 'u2', NEW.RoadID, 'Condition Updated', NOW());
+END$$
+
+DELIMITER ;
+
 -- Cursors
+
+-- Q1
 DELIMITER $$
 CREATE PROCEDURE GetLowConditionRoads()
 BEGIN
@@ -499,3 +552,64 @@ DELIMITER ;
 
 CALL GetLowConditionRoads();
 
+-- Q2
+DELIMITER $$
+CREATE PROCEDURE GetAllRoads()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE rname VARCHAR(255);
+
+    DECLARE cur CURSOR FOR
+    SELECT Name FROM Road;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO rname;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT rname;
+    END LOOP;
+
+    CLOSE cur;
+END$$
+
+DELIMITER ;
+
+CALL GetAllRoads();
+
+-- Q3
+DELIMITER $$
+
+CREATE PROCEDURE GetGoodRoads()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE rname VARCHAR(255);
+
+    DECLARE cur CURSOR FOR
+    SELECT r.Name
+    FROM Road r
+    JOIN Road_Condition rc ON r.RoadID = rc.RoadID
+    WHERE rc.Condition_Score > 80;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO rname;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        SELECT rname;
+    END LOOP;
+
+    CLOSE cur;
+END$$
+
+DELIMITER ;
+
+CALL GetGoodRoads();
