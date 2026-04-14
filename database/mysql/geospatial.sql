@@ -91,6 +91,14 @@ CREATE TABLE Road_Image (
 
 DESC Road_Image;
 
+-- Ch4 Normalization
+CREATE TABLE Road_Image_1NF (
+    ImageID INT AUTO_INCREMENT PRIMARY KEY,
+    RoadID VARCHAR(10),
+    Image_Path VARCHAR(255)
+);
+
+
 CREATE TABLE Admin_Action (
     ActionID CHAR(36) PRIMARY KEY,
     UserID CHAR(36) NOT NULL,
@@ -143,6 +151,8 @@ Select * from Location;
 INSERT INTO Road_Type VALUES
 ('t1', 'Highway'),
 ('t2', 'Street');
+
+Select * from road_type;
 
 -- (in case)
 -- DELETE FROM Road
@@ -215,7 +225,7 @@ INSERT INTO Road VALUES
 ('c2', 'Moderate'),
 ('c3', 'Poor');
 
-
+select * from Condition_Category;
 -- Road Condition Values
 
 INSERT INTO Road_Condition VALUES
@@ -331,12 +341,13 @@ SELECT u.UserName, a.Action_Type, a.Action_Time
 FROM Admin_Action a
 JOIN Users u ON a.UserID = u.UserID;
 
+
 -- CHAPTER 3
 
 -- CONSTRAINTS
 -- Q1
 ALTER TABLE Road_Condition
-ADD CONSTRAINT chk_score CHECK (Condition_Score BETWEEN 0 AND 100);
+ADD CONSTRAINT checkk_score CHECK (Condition_Score BETWEEN 25 AND 90);
 select * from Road_Condition;
 
 -- Q2
@@ -489,8 +500,11 @@ BEGIN
 END$$
 
 DELIMITER ;
+UPDATE Road_Condition
+SET Condition_Score = 75
+WHERE RoadID = 'r1';
 
-Select * from update_timestamp;
+SELECT * FROM Road_Condition WHERE RoadID = 'r1';
 
 -- Q2
 DELIMITER $$
@@ -506,6 +520,17 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- Trigger is called
+INSERT INTO Road_Condition VALUES
+('r21','c1',85,'AI',NOW());
+SELECT * FROM Road_Condition WHERE RoadID='r21';
+
+-- Trigger is not called
+INSERT INTO Road_Condition VALUES
+('r22','c2',100,'AI',NOW());
+SELECT * FROM Road_Condition WHERE RoadID='r22';
+
 
 -- Q3
 DELIMITER $$
@@ -613,3 +638,7 @@ END$$
 DELIMITER ;
 
 CALL GetGoodRoads();
+
+
+
+
