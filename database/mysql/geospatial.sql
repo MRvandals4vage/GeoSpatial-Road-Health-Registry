@@ -653,6 +653,7 @@ JOIN Road r ON a.RoadID = r.RoadID;
 
 -- CHAPTER 5
 
+-- savepoint
 START TRANSACTION;
 
 UPDATE road_condition
@@ -668,8 +669,98 @@ WHERE roadid='R002';
 ROLLBACK TO score_updated;
 
 COMMIT;
+select * from road_condition;
 
+-- commit
+START TRANSACTION;
 
+INSERT INTO users(userid, username, emailaddress, role, password)
+VALUES ('U010','Rahul','rahul@mail.com','USER', 'user123');
+
+COMMIT;
+
+select * from users;
+
+-- rollback
+
+START TRANSACTION;
+
+DELETE FROM road
+WHERE roadid='r11';
+
+ROLLBACK;
+
+-- transaction 1
+
+START TRANSACTION;
+
+-- Insert into Road_Image
+INSERT INTO Road_Image (ImageID, RoadID, Image_Path, Captured_At)
+VALUES ('img501', 'r1', '/images/pothole_road1.jpg', NOW());
+
+SAVEPOINT image_uploaded;
+
+-- Insert into Condition_Report (ModelID included as per FK)
+INSERT INTO Condition_Report 
+(ReportID, RoadID, UserID, ModelID, Predicted_Condition, Confidence_Score, Reported_At)
+VALUES 
+('rep501', 'r1', 'u1', 'm1', 'Poor', 0.92, NOW());
+
+-- Update Road_Condition
+UPDATE Road_Condition
+SET Condition_Score = 28,
+    Last_Updated = NOW()
+WHERE RoadID = 'r1';
+
+COMMIT;
+
+-- Verify outputs
+SELECT * FROM Road_Image WHERE ImageID = 'img501';
+SELECT * FROM Condition_Report WHERE ReportID = 'rep501';
+SELECT * FROM Road_Condition WHERE RoadID = 'r1';
+
+-- transaction 2
+
+START TRANSACTION;
+
+INSERT INTO Road_Image (ImageID, RoadID, Image_Path, Captured_At)
+VALUES ('img52', 'r2', '/images/damage_road2.jpg', NOW());
+
+SAVEPOINT image_saved;
+
+-- Valid insert (will succeed)
+INSERT INTO Condition_Report 
+(ReportID, RoadID, UserID, ModelID, Predicted_Condition, Confidence_Score, Reported_At)
+VALUES 
+('rep502', 'r2', 'u1', 'm1', 'Poor', 0.88, NOW());
+
+-- Now rollback manually
+ROLLBACK TO image_saved;
+
+COMMIT;
+
+-- Verify results
+SELECT * FROM Road_Image WHERE ImageID = 'img52';
+SELECT * FROM Condition_Report WHERE ReportID = 'rep502';
+
+-- transaction 3
+
+START TRANSACTION;
+
+-- Update existing report
+UPDATE Condition_Report
+SET Predicted_Condition = 'Resolved'
+WHERE ReportID = 'rep1';
+
+-- Insert admin action (use existing valid IDs)
+INSERT INTO Admin_Action (ActionID, UserID, RoadID, Action_Type, Action_Time)
+VALUES ('a501', 'u2', 'r1', 'Complaint Resolved', NOW());
+
+COMMIT;
+
+-- Verify
+SELECT * FROM Condition_Report WHERE ReportID = 'rep1';
+SELECT * FROM Admin_Action WHERE ActionID = 'a501';
 
 -- randomized code for ch5
 START TRANSACTION;
@@ -687,5 +778,7 @@ UPDATE road_condition
 SET condition_score = 25
 WHERE roadid='R001';
 COMMIT;
+
+
 
 
