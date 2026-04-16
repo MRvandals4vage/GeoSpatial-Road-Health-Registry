@@ -651,5 +651,41 @@ JOIN Users u ON a.UserID = u.UserID
 JOIN Road r ON a.RoadID = r.RoadID;
 
 
+-- CHAPTER 5
+
+START TRANSACTION;
+
+UPDATE road_condition
+SET condition_score = 40
+WHERE roadid='R002';
+
+SAVEPOINT score_updated;
+
+UPDATE road_condition
+SET condition_score = -10
+WHERE roadid='R002';
+
+ROLLBACK TO score_updated;
+
+COMMIT;
+
+
+
+-- randomized code for ch5
+START TRANSACTION;
+INSERT INTO road_image(imageid, roadid, image_path)
+VALUES ('IMG201','R001','pothole.jpg');
+INSERT INTO condition_report(reportid, roadid, userid)
+VALUES ('REP201','INVALID','U001');
+ROLLBACK;
+
+INSERT INTO condition_report(reportid, roadid)
+VALUES ('REP202','INVALID_ROAD');
+
+START TRANSACTION;
+UPDATE road_condition
+SET condition_score = 25
+WHERE roadid='R001';
+COMMIT;
 
 
