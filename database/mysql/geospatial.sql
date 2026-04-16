@@ -762,6 +762,69 @@ COMMIT;
 SELECT * FROM Condition_Report WHERE ReportID = 'rep1';
 SELECT * FROM Admin_Action WHERE ActionID = 'a501';
 
+-- transaction 4
+
+START TRANSACTION;
+
+UPDATE Road_Condition
+SET Condition_Score = Condition_Score - 5,
+    Last_Updated = NOW()
+WHERE RoadID = 'r3';
+
+UPDATE Road_Condition
+SET Condition_Score = Condition_Score - 3,
+    Last_Updated = NOW()
+WHERE RoadID = 'r4';
+
+COMMIT;
+
+SELECT * FROM Road_Condition WHERE RoadID IN ('r3','r4');
+
+-- transaction 5
+START TRANSACTION;
+
+-- First insert (valid)
+INSERT INTO Users (UserID, UserName, EmailAddress, Role, Password)
+VALUES ('u20', 'Rohan', 'rohan@gmail.com', 'USER', 'pass123');
+
+-- Second insert (same email → would violate UNIQUE)
+INSERT INTO Users (UserID, UserName, EmailAddress, Role, Password)
+VALUES ('u21', 'Rohit', 'rohan@gmail.com', 'USER', 'pass456');
+ROLLBACK;
+
+-- Verify
+SELECT * FROM Users WHERE EmailAddress = 'rohan@gmail.com';
+
+
+-- LOCKING
+
+-- a)
+
+START TRANSACTION;
+
+SELECT *
+FROM Condition_Report
+WHERE ReportID = 'rep1'
+FOR UPDATE;
+
+-- b)
+LOCK TABLES road_condition WRITE;
+UNLOCK TABLES;
+COMMIT;
+
+-- c)
+UPDATE Road_Condition
+SET Condition_Score = 50
+WHERE RoadID = 'r1';
+
+-- d)
+START TRANSACTION;
+SELECT *
+FROM condition_report
+WHERE reportid = 'rep1'
+FOR UPDATE;
+
+
 -- randomized code for ch5
 START TRANSACTION;
 INSERT INTO road_image(imageid, roadid, image_path)
