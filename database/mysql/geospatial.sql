@@ -641,4 +641,15 @@ CALL GetGoodRoads();
 
 
 
+-- CHAPTER 4
+
+-- 5NF
+
+SELECT u.UserName, r.Name, a.Action_Type, a.Action_Time
+FROM Admin_Action a
+JOIN Users u ON a.UserID = u.UserID
+JOIN Road r ON a.RoadID = r.RoadID;
+
+
+
 
