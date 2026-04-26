@@ -45,20 +45,20 @@ function createThreeLayer(id: string, origin: [number, number]) {
 
             // Body
             const bodyGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.4, 8);
-            const bodyMat = new THREE.MeshPhongMaterial({ color: 0x1e293b, emissive: 0x0f172a });
+            const bodyMat = new THREE.MeshPhongMaterial({ color: 0x333333, emissive: 0x000000 });
             const body = new THREE.Mesh(bodyGeo, bodyMat);
             body.rotation.x = Math.PI / 2;
             drone.add(body);
 
             // Ring
             const ringGeo = new THREE.TorusGeometry(1.2, 0.1, 16, 64);
-            const ringMat = new THREE.MeshPhongMaterial({ color: 0x4fd1c5, emissive: 0x4fd1c5, emissiveIntensity: 0.8 });
+            const ringMat = new THREE.MeshPhongMaterial({ color: 0x8B0000, emissive: 0x8B0000, emissiveIntensity: 0.8 });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             drone.add(ring);
 
             // Rotor
             const rotorGeo = new THREE.BoxGeometry(3, 0.1, 0.2);
-            const rotorMat = new THREE.MeshPhongMaterial({ color: 0x94a3b8 });
+            const rotorMat = new THREE.MeshPhongMaterial({ color: 0xCCCCCC });
             const rotor = new THREE.Mesh(rotorGeo, rotorMat);
             rotor.position.z = 0.3;
             drone.add(rotor);
@@ -72,7 +72,7 @@ function createThreeLayer(id: string, origin: [number, number]) {
             directionalLight.position.set(0, -70, 100).normalize();
             scene.add(directionalLight);
 
-            const pointLight = new THREE.PointLight(0x4fd1c5, 2, 50);
+            const pointLight = new THREE.PointLight(0x8B0000, 2, 50);
             pointLight.position.set(0, 0, 1);
             scene.add(pointLight);
 

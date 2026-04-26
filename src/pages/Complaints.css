@@ -3,7 +3,8 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #020617;
+    background: var(--bg-main);
+    font-family: 'Barlow', sans-serif;
 }
 
 .complaints-main {
@@ -17,8 +18,9 @@
 .complaints-container {
     width: 600px;
     padding: 3rem;
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 20px;
+    background: #0a0a0a;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
 }
 
 .complaints-header {
@@ -28,13 +30,18 @@
 
 .complaints-header h2 {
     font-size: 1.8rem;
-    color: white;
+    color: var(--accent-silver);
     margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 0.05em;
 }
 
 .complaints-header p {
-    color: #94a3b8;
-    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .complaints-form {
@@ -50,19 +57,26 @@
 }
 
 .form-row label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: #cbd5e1;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .form-row select, .form-row textarea {
-    background: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    background: #111;
+    border: 1px solid var(--border-subtle);
+    border-radius: 2px;
     padding: 0.8rem;
     color: white;
     font-size: 0.9rem;
     outline: none;
+    transition: all 0.2s;
+}
+
+.form-row select:focus, .form-row textarea:focus {
+    border-color: var(--accent-red);
 }
 
 .image-upload-zone {
@@ -73,68 +87,77 @@
     display: block;
     width: 100%;
     padding: 1.5rem;
-    border: 2px dashed rgba(79, 209, 197, 0.3);
-    border-radius: 12px;
+    border: 1px dashed var(--border-subtle);
+    border-radius: 4px;
     text-align: center;
-    color: #4fd1c5;
+    color: var(--text-secondary);
     cursor: pointer;
-    background: rgba(79, 209, 197, 0.05);
+    background: #111;
     transition: all 0.2s;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
 }
 
 .upload-btn:hover {
-    border-color: #4fd1c5;
-    background: rgba(79, 209, 197, 0.1);
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    background: rgba(139, 0, 0, 0.05);
 }
 
 .location-info {
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    background: rgba(0,0,0,0.2);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: #000;
     padding: 0.8rem;
-    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 2px;
 }
 
 .loc-warning {
-    color: #fca5a5;
+    color: var(--status-moderate);
 }
 
 .status-msg {
     padding: 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .status-msg.success {
-    background: rgba(34, 197, 94, 0.1);
-    color: #4ade80;
-    border: 1px solid rgba(34, 197, 94, 0.3);
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .status-msg.error {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(153, 27, 27, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(153, 27, 27, 0.3);
 }
 
 .submit-complaint-btn {
-    background: #4fd1c5;
-    color: #020617;
+    background: var(--accent-red);
+    color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 2px;
     padding: 1rem;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .submit-complaint-btn:hover {
-    background: #38b2ac;
+    background: #b91c1c;
     transform: translateY(-1px);
 }
 

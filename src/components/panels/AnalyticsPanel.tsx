@@ -91,7 +91,7 @@ const AnalyticsPanel: React.FC = () => {
                             <path 
                                 d="M 10 50 A 40 40 0 0 1 90 50" 
                                 fill="none" 
-                                stroke="var(--accent-cyan)" 
+                                stroke="var(--accent-red)" 
                                 strokeWidth="8" 
                                 strokeLinecap="round" 
                                 strokeDasharray="125.6"
@@ -113,20 +113,20 @@ const AnalyticsPanel: React.FC = () => {
                     </div>
 
                     <div className="history-chart" style={{ height: '180px', marginTop: '10px' }}>
-                        <h4 style={{marginBottom: '10px', fontSize: '0.75rem', textTransform: 'uppercase', color: '#64748b'}}>Condition Trend</h4>
+                        <h4 style={{marginBottom: '10px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)'}}>Condition Trend</h4>
                         {isLoadingHistory ? (
-                            <div style={{ color: '#4fd1c5', fontSize: '0.8rem', textAlign: 'center', marginTop: '40px' }}>Loading timeline...</div>
+                            <div style={{ color: 'var(--accent-red)', fontSize: '0.8rem', textAlign: 'center', marginTop: '40px' }}>Loading timeline...</div>
                         ) : (
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                                     <XAxis dataKey="date" hide />
                                     <YAxis domain={[0, 100]} hide />
                                     <RechartsTooltip 
-                                        contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px'}}
-                                        itemStyle={{color: '#4fd1c5'}}
+                                        contentStyle={{backgroundColor: '#000', border: '1px solid var(--border-subtle)', borderRadius: '2px'}}
+                                        itemStyle={{color: 'var(--accent-red)'}}
                                     />
-                                    <Line type="monotone" dataKey="score" stroke="#4fd1c5" strokeWidth={3} dot={{ r: 4, fill: '#4fd1c5' }} activeDot={{ r: 6 }} />
+                                    <Line type="monotone" dataKey="score" stroke="var(--accent-red)" strokeWidth={2} dot={{ r: 3, fill: 'var(--accent-red)' }} activeDot={{ r: 5 }} />
                                 </LineChart>
                             </ResponsiveContainer>
                         )}
@@ -143,15 +143,15 @@ const AnalyticsPanel: React.FC = () => {
                             </button>
                             
                             <div className="ai-analysis-box" style={{ 
-                                background: 'rgba(79, 209, 197, 0.05)', 
-                                border: '1px solid rgba(79, 209, 197, 0.2)', 
-                                borderRadius: '12px', 
+                                background: 'rgba(139, 0, 0, 0.05)', 
+                                border: '1px solid rgba(139, 0, 0, 0.2)', 
+                                borderRadius: '2px', 
                                 padding: '15px' 
                             }}>
-                                <h4 style={{ fontSize: '0.8rem', color: '#4fd1c5', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <span>🤖</span> AI Image Analysis (CNN)
+                                <h4 style={{ fontSize: '0.75rem', color: 'var(--accent-red)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
+                                    <span>🤖</span> AI Image Analysis
                                 </h4>
-                                <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginBottom: '12px' }}>
+                                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
                                     Upload a road image to automatically detect damage using the RoadNet CNN model.
                                 </p>
                                 <input 
@@ -164,14 +164,14 @@ const AnalyticsPanel: React.FC = () => {
                                         if (file) useRoadStore.getState().uploadImage(selectedRoad.id, file);
                                     }}
                                 />
-                                <label htmlFor="cnn-upload" className="mode-btn active" style={{ display: 'block', cursor: 'pointer', fontSize: '0.8rem', padding: '10px' }}>
+                                <label htmlFor="cnn-upload" className="mode-btn active" style={{ display: 'block', cursor: 'pointer', fontSize: '0.75rem', padding: '10px' }}>
                                     {isLoading ? 'Processing Image...' : 'Select Road Image'}
                                 </label>
                             </div>
                         </div>
                     ) : (
                         <form className="inspection-form animate-slide-up" onSubmit={handleInspectionSubmit}>
-                            <h4 style={{fontSize: '0.8rem', color: '#4fd1c5', marginBottom: '5px'}}>Report Submission</h4>
+                            <h4 style={{fontSize: '0.75rem', color: 'var(--accent-red)', marginBottom: '5px', textTransform: 'uppercase'}}>Report Submission</h4>
                             <label>
                                 Health Score ({scoreInput})
                                 <input type="range" min="0" max="100" value={scoreInput} onChange={e => setScoreInput(Number(e.target.value))} />
@@ -190,10 +190,10 @@ const AnalyticsPanel: React.FC = () => {
                                     <input type="file" accept="image/*" style={{ fontSize: '0.7rem' }} />
                                 </div>
                             </label>
-                            <textarea placeholder="Observation notes..." value={notesInput} onChange={e => setNotesInput(e.target.value)} rows={2} style={{background: '#020617', border: '1px solid #1e293b', borderRadius: '6px', color: 'white', padding: '8px', fontSize: '0.8rem'}} />
+                            <textarea placeholder="Observation notes..." value={notesInput} onChange={e => setNotesInput(e.target.value)} rows={2} style={{background: '#000', border: '1px solid var(--border-subtle)', borderRadius: '2px', color: 'white', padding: '8px', fontSize: '0.8rem'}} />
                             <div className="form-actions">
-                                <button type="button" onClick={() => setIsInspecting(false)} style={{background: 'transparent', border: '1px solid #4fd1c5', color: '#4fd1c5', padding: '8px 16px', borderRadius: '4px'}}>Cancel</button>
-                                <button type="submit" className="submit-btn" style={{background: '#4fd1c5', color: '#020617', padding: '8px 16px', borderRadius: '4px', border: 'none'}}>Submit</button>
+                                <button type="button" onClick={() => setIsInspecting(false)} style={{background: 'transparent', border: '1px solid var(--accent-red)', color: 'var(--accent-red)', padding: '8px 16px', borderRadius: '2px'}}>Cancel</button>
+                                <button type="submit" className="submit-btn" style={{background: 'var(--accent-red)', color: 'white', padding: '8px 16px', borderRadius: '2px', border: 'none'}}>Submit</button>
                             </div>
                         </form>
                     )}

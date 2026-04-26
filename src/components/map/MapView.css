@@ -2,9 +2,9 @@
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+    border-radius: 2px;
     overflow: hidden;
-    background: #020617;
+    background: #000;
     border: 1px solid var(--border-subtle);
 }
 
@@ -18,18 +18,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, #1e1b4b, #020617);
+    background: #000;
 }
 
 .error-card {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: #0a0a0a;
+    border: 1px solid var(--accent-red);
     padding: 2.5rem;
-    border-radius: 16px;
+    border-radius: 2px;
     text-align: center;
     max-width: 400px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
 }
 
 .error-icon {
@@ -39,30 +38,34 @@
 }
 
 .error-card h3 {
-    font-family: 'Orbitron', sans-serif;
-    color: #ef4444;
+    font-family: 'Barlow Condensed', sans-serif;
+    color: var(--accent-red);
     margin-bottom: 0.75rem;
     font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .error-card p {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     line-height: 1.5;
     margin-bottom: 2rem;
 }
 
 .retry-btn {
-    background: #ef4444;
+    background: var(--accent-red);
     color: white;
     padding: 0.8rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: transform 0.2s, background 0.2s;
+    border-radius: 2px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.2s;
 }
 
 .retry-btn:hover {
-    background: #dc2626;
+    background: #b91c1c;
     transform: translateY(-2px);
 }
 
@@ -70,25 +73,26 @@
 .map-tooltip {
     position: absolute;
     pointer-events: none;
-    background: rgba(2, 6, 23, 0.95);
+    background: #000;
     color: var(--text-primary);
     padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-family: 'Inter', sans-serif;
-    border: 1px solid var(--accent-cyan);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-family: 'Barlow', sans-serif;
+    border: 1px solid var(--accent-red);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     display: none;
     z-index: 1000;
-    backdrop-filter: blur(4px);
 }
 
 .map-tooltip strong {
-    color: var(--accent-cyan);
-    font-size: 0.85rem;
+    color: var(--accent-red);
+    font-size: 0.8rem;
     display: block;
     margin-bottom: 4px;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* ── Playback Overlay ───────────────────────────── */
@@ -97,16 +101,14 @@
     bottom: 24px;
     left: 24px;
     right: 24px;
-    background: rgba(15, 23, 42, 0.88);
+    background: rgba(0, 0, 0, 0.9);
     padding: 18px 24px;
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    border: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
     gap: 12px;
     z-index: 10;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
 }
 
 .playback-header {
@@ -116,18 +118,20 @@
 }
 
 .playback-title {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     color: var(--text-muted);
 }
 
 .playback-current-date {
-    font-weight: 600;
-    color: var(--accent-cyan);
-    font-family: 'Orbitron', monospace;
-    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-red);
+    font-family: 'Barlow Condensed', monospace;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .playback-controls {
@@ -137,27 +141,27 @@
 }
 
 .playback-bound-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .playback-slider {
     flex: 1;
-    height: 4px;
+    height: 2px;
     -webkit-appearance: none;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
+    background: #222;
     outline: none;
 }
 
 .playback-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    background: var(--accent-cyan);
-    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--accent-red);
+    border-radius: 0;
     cursor: pointer;
-    box-shadow: 0 0 10px rgba(79, 209, 197, 0.4);
     transition: transform 0.2s;
 }
 

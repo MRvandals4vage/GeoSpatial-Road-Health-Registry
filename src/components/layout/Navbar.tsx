@@ -24,37 +24,39 @@ const Navbar: React.FC = () => {
     return (
         <header className="navbar">
             {/* ── Brand ───────────────────────────────────── */}
-            <NavLink to="/" className="navbar__brand" style={{ textDecoration: 'none' }}>
-                <span className="navbar__icon">⬡</span>
-                <span className="navbar__title">
-                    GeoRoad <span className="navbar__title--accent">Intelligence</span>
-                </span>
-                <span className="navbar__subtitle">Geospatial Road Condition Monitoring</span>
-            </NavLink>
-
-            {/* ── Role-Based Nav ─────────────────────────── */}
-            <nav className="navbar__nav">
-                <NavLink to="/" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Dashboard</NavLink>
+            <div className="navbar__left">
+                <NavLink to="/" className="navbar__brand" style={{ textDecoration: 'none' }}>
+                    <span className="navbar__icon">◈</span>
+                    <span className="navbar__title">
+                        Geo<span className="navbar__title--accent">Road</span>
+                    </span>
+                </NavLink>
                 
-                {user?.role === 'USER' && (
-                    <NavLink to="/complaints" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Submit Complaint</NavLink>
-                )}
-                
-                {user?.role === 'ADMIN' && (
-                    <NavLink to="/admin/complaints" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Review Complaints</NavLink>
-                )}
+                <nav className="navbar__nav">
+                    <NavLink to="/" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Monitor</NavLink>
+                    
+                    {user?.role === 'USER' && (
+                        <NavLink to="/complaints" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Reports</NavLink>
+                    )}
+                    
+                    {user?.role === 'ADMIN' && (
+                        <NavLink to="/admin/complaints" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Review</NavLink>
+                    )}
 
-                <NavLink to="/analytics" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Analytics</NavLink>
-            </nav>
+                    <NavLink to="/analytics" className={({ isActive }) => `navbar__pill ${isActive ? 'navbar__pill--active' : ''}`}>Analytics</NavLink>
+                </nav>
+            </div>
 
             {/* ── Right Meta ──────────────────────────────── */}
             <div className="navbar__meta">
+                <span className="navbar__timestamp">{now}</span>
                 <div className="user-info">
                     <span className="user-name">{user?.userName}</span>
                     <span className="user-role">{user?.role}</span>
                 </div>
-                <button className="logout-btn" onClick={handleLogout} title="Logout">Logout</button>
-                <span className="navbar__timestamp">{now}</span>
+                <button className="logout-btn" onClick={handleLogout} title="Logout">
+                    <span>⏻</span>
+                </button>
             </div>
         </header>
     );

@@ -59,7 +59,7 @@ const Login: React.FC = () => {
                     <button type="submit" className="login-btn">Secure Login</button>
                     
                     <div className="login-footer">
-                        <p>Don't have an account? <Link to="/register" style={{color: '#4fd1c5', textDecoration: 'none'}}>Register here</Link></p>
+                        <p>Don't have an account? <Link to="/register" style={{color: 'var(--accent-silver)', textDecoration: 'none', borderBottom: '1px solid var(--accent-red)'}}>Register here</Link></p>
                         <p style={{marginTop: '1rem'}}>Demo Credentials:</p>
                         <code>admin@georoad.com / admin</code><br/>
                         <code>user@georoad.com / user</code>

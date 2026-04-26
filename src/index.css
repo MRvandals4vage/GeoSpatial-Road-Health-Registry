@@ -1,15 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700&display=swap');
 
 :root {
-  --status-good: #22c55e;
-  --status-moderate: #eab308;
-  --status-severe: #ef4444;
-  --accent-cyan: #4fd1c5;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --surface-panel: rgba(15, 23, 42, 0.85);
-  --border-subtle: rgba(148, 163, 184, 0.1);
+  --status-good: #10b981;
+  --status-moderate: #f59e0b;
+  --status-severe: #991b1b; /* Blood Red */
+  --accent-red: #8b0000;    /* Blood Red */
+  --accent-silver: #c0c0c0; /* Silver */
+  --text-primary: #e5e7eb;  /* Light Silver/Grey */
+  --text-secondary: #9ca3af; /* Grey */
+  --text-muted: #6b7280;    /* Dark Grey */
+  --bg-main: #000000;       /* Black */
+  --surface-panel: #121212; /* Dark Grey Panel */
+  --border-subtle: #374151; /* Grey Border */
   --navbar-height: 56px;
   --panel-width: 320px;
 }
@@ -21,12 +23,13 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #020617;
+  font-family: 'Barlow', sans-serif;
+  background-color: var(--bg-main);
   color: var(--text-primary);
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  letter-spacing: 0.02em;
 }
 
 #root {

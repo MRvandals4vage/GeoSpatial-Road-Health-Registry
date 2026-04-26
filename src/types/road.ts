@@ -86,13 +86,13 @@ export interface AnalyticsSummary {
 // ─── Condition Colour Mapping ─────────────────────────────────────────────────
 
 export const CONDITION_COLOR: Record<RoadCondition, [number, number, number, number]> = {
-  GOOD:     [34,  197,  94, 220],   // Green
-  MODERATE: [234, 179,   8, 220],   // Yellow
-  SEVERE:   [239,  68,  68, 220],   // Red
+  GOOD:     [16,  185, 129, 200],   // Minimalist Green
+  MODERATE: [245, 158,  11, 200],   // Minimalist Amber
+  SEVERE:   [139,   0,   0, 230],   // Blood Red
 };
 
 export const CONDITION_HIGHLIGHT: Record<RoadCondition, [number, number, number, number]> = {
-  GOOD:     [74,  222, 128, 255],
-  MODERATE: [253, 224,  71, 255],
-  SEVERE:   [248, 113, 113, 255],
+  GOOD:     [52,  211, 153, 255],
+  MODERATE: [251, 191,  36, 255],
+  SEVERE:   [185,  28,  28, 255],   // Brighter Blood Red
 };

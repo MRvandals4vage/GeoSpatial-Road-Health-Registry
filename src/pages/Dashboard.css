@@ -1,38 +1,123 @@
-/* src/pages/Dashboard.css */
 :root {
-    --bg-primary: #0f0f1a;
-    --bg-secondary: #1a1a2b;
-    --text-primary: #e0e0ff;
-    --accent: #4fd1c5;
+    --left-panel-width: 260px;
+    --right-panel-width: 320px;
 }
 
 .dashboard {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background: var(--bg-primary);
+    background: #000;
     color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Barlow', sans-serif;
+    overflow: hidden;
 }
 
 .dashboard__content {
     flex: 1;
-    display: grid;
-    grid-template-columns: 260px 1fr 300px;
-    gap: 1rem;
-    padding: 1rem;
+    display: flex;
+    gap: 0;
+    padding: 0;
     overflow: hidden;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panel-container {
+    height: 100%;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    background: #000;
+    border-right: 1px solid var(--border-subtle);
+}
+
+.left-panel {
+    width: var(--left-panel-width);
+}
+
+.right-panel {
+    width: var(--right-panel-width);
+    border-right: none;
+    border-left: 1px solid var(--border-subtle);
+}
+
+.panel-collapsed {
+    width: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+    border: none !important;
+}
+
+.map-container-main {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #050505;
+}
+
+/* ── Toggle Buttons ────────────────────────────── */
+.panel-toggle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 48px;
+    background: #111;
+    border: 1px solid var(--border-subtle);
+    color: var(--accent-silver);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+}
+
+.panel-toggle:hover {
+    background: var(--accent-red);
+    color: white;
+    border-color: var(--accent-red);
+}
+
+.toggle-left {
+    left: 0;
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+}
+
+.toggle-right {
+    right: 0;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+
+.left-panel-present .toggle-left {
+    left: var(--left-panel-width);
+}
+
+.right-panel-present .toggle-right {
+    right: var(--right-panel-width);
 }
 
 @media (max-width: 1024px) {
-    .dashboard__content {
-        grid-template-columns: 200px 1fr;
+    :root {
+        --left-panel-width: 220px;
+        --right-panel-width: 280px;
     }
 }
 
 @media (max-width: 768px) {
     .dashboard__content {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+        flex-direction: column;
+    }
+    .left-panel, .right-panel {
+        width: 100% !important;
+        height: 300px;
+    }
+    .panel-toggle {
+        display: none;
     }
 }
