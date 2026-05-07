@@ -24,7 +24,7 @@ python3 main.py &
 AI_PID=$!
 cd ..
 
-# 2. Backend (Java/Spring Boot with H2)
+# 2. Backend (Java/Spring Boot - H2 Mode)
 echo -e "${GREEN}[2/3] Starting Backend (Java Spring Boot - H2 Mode)...${NC}"
 cd backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev > backend.log 2>&1 &

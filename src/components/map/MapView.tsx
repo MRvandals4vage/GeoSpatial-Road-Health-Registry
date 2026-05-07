@@ -151,8 +151,8 @@ const MapView: React.FC = () => {
         const map = new maplibregl.Map({
             container: mapContainer.current,
             style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-            center: [80.035, 12.825],
-            zoom: 14,
+            center: [80.044, 12.823],
+            zoom: 16,
             pitch: 60,
         });
 
@@ -168,7 +168,7 @@ const MapView: React.FC = () => {
 
         map.on('style.load', () => {
             if (!map.getLayer('three-layer')) {
-                const threeLayer = createThreeLayer('three-layer', [80.035, 12.825]);
+                const threeLayer = createThreeLayer('three-layer', [80.044, 12.823]);
                 map.addLayer(threeLayer as unknown as maplibregl.CustomLayerInterface);
             }
         });
